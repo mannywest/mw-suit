@@ -1,6 +1,8 @@
 # MW Tailleur 3D suit — lapels + collar repair
 
 Role, working method and the full check list: @CLAUDE_ROLE.md (follow it every session).
+Latest state, cloud setup and next task (shawl lapel): @HANDOFF_2026-11-15.md (read it first). Base-jacket + swappable-lapel plan: @LAPEL_BASE_PLAN.md.
+Manny's rule from 15 Nov: fix every issue you have noticed before reporting; never report an incomplete step as finished.
 
 Owner: Manny (MW Tailleur). He is not a coder: explain simply, keep replies short, and never call a result "done" until he confirms from his own screenshot or a render you have actually looked at.
 Keep token use low: check with numbers first, render only to confirm, look at few images. Do ONE repair step per session, then stop and show Manny.
