@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MW Tailleur – Configurator (Stage 1)</title>
+<style>
+html,body{margin:0;height:100%;background:#15161a;color:#e8e6e1;font:14px system-ui,sans-serif}
+#app{display:flex;height:100%;flex-direction:row}
+#view{flex:1;min-width:0;position:relative}canvas{display:block;width:100%;height:100%}
+#panel{width:280px;padding:16px;overflow:auto;background:#1d1f25;border-left:1px solid #2c2f38}
+h1{font-size:15px;margin:0 0 12px;letter-spacing:.08em;text-transform:uppercase}
+h2{font-size:12px;margin:18px 0 6px;color:#9a9aa3;text-transform:uppercase;letter-spacing:.06em}
+.sw{display:flex;flex-wrap:wrap;gap:6px}
+.sw button{width:44px;height:44px;border:2px solid transparent;border-radius:6px;background-size:cover;cursor:pointer;padding:0}
+.sw button.on{border-color:#c9a45c}
+label{display:block;margin:6px 0}
+button.act{margin-top:14px;padding:8px 12px;background:#c9a45c;border:0;border-radius:6px;color:#111;cursor:pointer;font-weight:600}
+#status{position:absolute;left:10px;bottom:8px;font-size:11px;color:#777}
+small{color:#8a8a93}
+@media(max-width:700px){#app{flex-direction:column}#panel{width:auto;height:40%;border-left:0;border-top:1px solid #2c2f38}}
+</style></head><body><div id="app"><div id="view"><div id="status">loading…</div></div><div id="panel"></div></div>
+<script type="module" src="/src/main.ts"></script></body></html>

@@ -1,0 +1,1207 @@
+{
+"version": 1,
+"source": "Buttons_Felt_Satin_Thread_Milanese_Velvet_2023.pdf (Drive: Fabrics, Linings, Buttons, Felts, Threads ETC)",
+"buttonholes": [
+"01",
+"02",
+"03",
+"04",
+"05",
+"06",
+"07",
+"08",
+"09",
+"10",
+"11"
+],
+"items": [
+{
+"id": "b_u7-48",
+"kind": "button",
+"code": "U7-48",
+"name": "U7-48",
+"color": "a3866e",
+"thumb": "trims/b_u7-48.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-40",
+"kind": "button",
+"code": "U7-40",
+"name": "U7-40",
+"color": "f0f0dc",
+"thumb": "trims/b_u7-40.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-41",
+"kind": "button",
+"code": "U7-41",
+"name": "U7-41",
+"color": "e6e8d3",
+"thumb": "trims/b_u7-41.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-42",
+"kind": "button",
+"code": "U7-42",
+"name": "U7-42",
+"color": "e6e1c7",
+"thumb": "trims/b_u7-42.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-43",
+"kind": "button",
+"code": "U7-43",
+"name": "U7-43",
+"color": "e7d1a9",
+"thumb": "trims/b_u7-43.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-44",
+"kind": "button",
+"code": "U7-44",
+"name": "U7-44",
+"color": "eed2ae",
+"thumb": "trims/b_u7-44.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-45",
+"kind": "button",
+"code": "U7-45",
+"name": "U7-45",
+"color": "e3d0be",
+"thumb": "trims/b_u7-45.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-47",
+"kind": "button",
+"code": "U7-47",
+"name": "U7-47",
+"color": "765d4f",
+"thumb": "trims/b_u7-47.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-49",
+"kind": "button",
+"code": "U7-49",
+"name": "U7-49",
+"color": "584c4c",
+"thumb": "trims/b_u7-49.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-09",
+"kind": "button",
+"code": "U7-09",
+"name": "U7-09",
+"color": "363635",
+"thumb": "trims/b_u7-09.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-28",
+"kind": "button",
+"code": "U7-28",
+"name": "U7-28",
+"color": "82454f",
+"thumb": "trims/b_u7-28.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-61",
+"kind": "button",
+"code": "U7-61",
+"name": "U7-61",
+"color": "e1d9c3",
+"thumb": "trims/b_u7-61.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-63",
+"kind": "button",
+"code": "U7-63",
+"name": "U7-63",
+"color": "a8a18b",
+"thumb": "trims/b_u7-63.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-68",
+"kind": "button",
+"code": "U7-68",
+"name": "U7-68",
+"color": "626452",
+"thumb": "trims/b_u7-68.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-03",
+"kind": "button",
+"code": "U7-03",
+"name": "U7-03",
+"color": "e0dfd7",
+"thumb": "trims/b_u7-03.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-04",
+"kind": "button",
+"code": "U7-04",
+"name": "U7-04",
+"color": "bdbbb8",
+"thumb": "trims/b_u7-04.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-06",
+"kind": "button",
+"code": "U7-06",
+"name": "U7-06",
+"color": "888785",
+"thumb": "trims/b_u7-06.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-08",
+"kind": "button",
+"code": "U7-08",
+"name": "U7-08",
+"color": "65666a",
+"thumb": "trims/b_u7-08.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-425",
+"kind": "button",
+"code": "U28-425",
+"name": "U28-425",
+"color": "f8e5b3",
+"thumb": "trims/b_u28-425.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-51",
+"kind": "button",
+"code": "U7-51",
+"name": "U7-51",
+"color": "bcc5da",
+"thumb": "trims/b_u7-51.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-53",
+"kind": "button",
+"code": "U7-53",
+"name": "U7-53",
+"color": "aeb9d2",
+"thumb": "trims/b_u7-53.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-55",
+"kind": "button",
+"code": "U7-55",
+"name": "U7-55",
+"color": "4e6aa4",
+"thumb": "trims/b_u7-55.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u7-58",
+"kind": "button",
+"code": "U7-58",
+"name": "U7-58",
+"color": "535b7a",
+"thumb": "trims/b_u7-58.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-01",
+"kind": "button",
+"code": "U28-01",
+"name": "U28-01",
+"color": "dddcc9",
+"thumb": "trims/b_u28-01.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-40",
+"kind": "button",
+"code": "U28-40",
+"name": "U28-40",
+"color": "ecdcc2",
+"thumb": "trims/b_u28-40.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-41",
+"kind": "button",
+"code": "U28-41",
+"name": "U28-41",
+"color": "fbf8d2",
+"thumb": "trims/b_u28-41.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-42",
+"kind": "button",
+"code": "U28-42",
+"name": "U28-42",
+"color": "e0d8c1",
+"thumb": "trims/b_u28-42.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-55",
+"kind": "button",
+"code": "U28-55",
+"name": "U28-55",
+"color": "6d8199",
+"thumb": "trims/b_u28-55.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-43",
+"kind": "button",
+"code": "U28-43",
+"name": "U28-43",
+"color": "ebdbb5",
+"thumb": "trims/b_u28-43.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-45",
+"kind": "button",
+"code": "U28-45",
+"name": "U28-45",
+"color": "6b6058",
+"thumb": "trims/b_u28-45.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-46",
+"kind": "button",
+"code": "U28-46",
+"name": "U28-46",
+"color": "a37e57",
+"thumb": "trims/b_u28-46.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-49",
+"kind": "button",
+"code": "U28-49",
+"name": "U28-49",
+"color": "a6927f",
+"thumb": "trims/b_u28-49.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-03",
+"kind": "button",
+"code": "U28-03",
+"name": "U28-03",
+"color": "e0dacf",
+"thumb": "trims/b_u28-03.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-07",
+"kind": "button",
+"code": "U28-07",
+"name": "U28-07",
+"color": "787677",
+"thumb": "trims/b_u28-07.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-08",
+"kind": "button",
+"code": "U28-08",
+"name": "U28-08",
+"color": "666465",
+"thumb": "trims/b_u28-08.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-09",
+"kind": "button",
+"code": "U28-09",
+"name": "U28-09",
+"color": "3f3f40",
+"thumb": "trims/b_u28-09.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-25",
+"kind": "button",
+"code": "U28-25",
+"name": "U28-25",
+"color": "ac695e",
+"thumb": "trims/b_u28-25.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-58",
+"kind": "button",
+"code": "U28-58",
+"name": "U28-58",
+"color": "49556d",
+"thumb": "trims/b_u28-58.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-59",
+"kind": "button",
+"code": "U28-59",
+"name": "U28-59",
+"color": "36383f",
+"thumb": "trims/b_u28-59.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-62",
+"kind": "button",
+"code": "U28-62",
+"name": "U28-62",
+"color": "817762",
+"thumb": "trims/b_u28-62.jpg",
+"finish": "horn"
+},
+{
+"id": "b_u28-65",
+"kind": "button",
+"code": "U28-65",
+"name": "U28-65",
+"color": "515245",
+"thumb": "trims/b_u28-65.jpg",
+"finish": "horn"
+},
+{
+"id": "b_syg-24",
+"kind": "button",
+"code": "SYG-24",
+"name": "SYG-24",
+"color": "5ba2f3",
+"thumb": "trims/b_syg-24.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-3",
+"kind": "button",
+"code": "SYG-3",
+"name": "SYG-3",
+"color": "fcfdea",
+"thumb": "trims/b_syg-3.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-9",
+"kind": "button",
+"code": "SYG-9",
+"name": "SYG-9",
+"color": "f5ee69",
+"thumb": "trims/b_syg-9.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-15",
+"kind": "button",
+"code": "SYG-15",
+"name": "SYG-15",
+"color": "f1d158",
+"thumb": "trims/b_syg-15.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-8",
+"kind": "button",
+"code": "SYG-8",
+"name": "SYG-8",
+"color": "e1be58",
+"thumb": "trims/b_syg-8.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-13",
+"kind": "button",
+"code": "SYG-13",
+"name": "SYG-13",
+"color": "f0d8c8",
+"thumb": "trims/b_syg-13.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-500",
+"kind": "button",
+"code": "SYG-500",
+"name": "SYG-500",
+"color": "d6e3e1",
+"thumb": "trims/b_syg-500.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-6",
+"kind": "button",
+"code": "SYG-6",
+"name": "SYG-6",
+"color": "a3d0ec",
+"thumb": "trims/b_syg-6.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-18",
+"kind": "button",
+"code": "SYG-18",
+"name": "SYG-18",
+"color": "c7c3eb",
+"thumb": "trims/b_syg-18.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-2",
+"kind": "button",
+"code": "SYG-2",
+"name": "SYG-2",
+"color": "85875c",
+"thumb": "trims/b_syg-2.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-5",
+"kind": "button",
+"code": "SYG-5",
+"name": "SYG-5",
+"color": "f0d9b8",
+"thumb": "trims/b_syg-5.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-16",
+"kind": "button",
+"code": "SYG-16",
+"name": "SYG-16",
+"color": "fabcdc",
+"thumb": "trims/b_syg-16.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-10",
+"kind": "button",
+"code": "SYG-10",
+"name": "SYG-10",
+"color": "f5a0b0",
+"thumb": "trims/b_syg-10.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-11",
+"kind": "button",
+"code": "SYG-11",
+"name": "SYG-11",
+"color": "f63c6f",
+"thumb": "trims/b_syg-11.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-17",
+"kind": "button",
+"code": "SYG-17",
+"name": "SYG-17",
+"color": "f82f42",
+"thumb": "trims/b_syg-17.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-4",
+"kind": "button",
+"code": "SYG-4",
+"name": "SYG-4",
+"color": "f39b76",
+"thumb": "trims/b_syg-4.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-600",
+"kind": "button",
+"code": "SYG-600",
+"name": "SYG-600",
+"color": "e1d186",
+"thumb": "trims/b_syg-600.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_syg-601",
+"kind": "button",
+"code": "SYG-601",
+"name": "SYG-601",
+"color": "d1d9af",
+"thumb": "trims/b_syg-601.jpg",
+"finish": "gloss"
+},
+{
+"id": "b_b",
+"kind": "button",
+"code": "B",
+"name": "B",
+"color": "424242",
+"thumb": "trims/b_b.jpg",
+"finish": "horn"
+},
+{
+"id": "b_br",
+"kind": "button",
+"code": "BR",
+"name": "BR",
+"color": "504a47",
+"thumb": "trims/b_br.jpg",
+"finish": "horn"
+},
+{
+"id": "b_lbr",
+"kind": "button",
+"code": "LBR",
+"name": "LBR",
+"color": "6c544f",
+"thumb": "trims/b_lbr.jpg",
+"finish": "horn"
+},
+{
+"id": "b_shell-b",
+"kind": "button",
+"code": "Shell-B",
+"name": "Shell-B",
+"color": "373733",
+"thumb": "trims/b_shell-b.jpg",
+"finish": "shell"
+},
+{
+"id": "b_metal-1",
+"kind": "button",
+"code": "Metal-1",
+"name": "Metal-1",
+"color": "c2b26c",
+"thumb": "trims/b_metal-1.jpg",
+"finish": "metal"
+},
+{
+"id": "b_metal-2",
+"kind": "button",
+"code": "Metal-2",
+"name": "Metal-2",
+"color": "e8ab74",
+"thumb": "trims/b_metal-2.jpg",
+"finish": "metal"
+},
+{
+"id": "b_shell-w",
+"kind": "button",
+"code": "Shell-W",
+"name": "Shell-W",
+"color": "c6c3a6",
+"thumb": "trims/b_shell-w.jpg",
+"finish": "shell"
+},
+{
+"id": "b_metal-3",
+"kind": "button",
+"code": "Metal-3",
+"name": "Metal-3",
+"color": "ddba13",
+"thumb": "trims/b_metal-3.jpg",
+"finish": "metal"
+},
+{
+"id": "b_metal-4",
+"kind": "button",
+"code": "Metal-4",
+"name": "Metal-4",
+"color": "d1a82f",
+"thumb": "trims/b_metal-4.jpg",
+"finish": "metal"
+},
+{
+"id": "s_tux1",
+"kind": "satin",
+"code": "TUX1",
+"name": "TUX1 satin",
+"color": "82453c",
+"thumb": "trims/s_tux1.jpg"
+},
+{
+"id": "s_tux2",
+"kind": "satin",
+"code": "TUX2",
+"name": "TUX2 satin",
+"color": "6f6c6b",
+"thumb": "trims/s_tux2.jpg"
+},
+{
+"id": "s_tux3",
+"kind": "satin",
+"code": "TUX3",
+"name": "TUX3 satin",
+"color": "cecece",
+"thumb": "trims/s_tux3.jpg"
+},
+{
+"id": "s_tux4",
+"kind": "satin",
+"code": "TUX4",
+"name": "TUX4 satin",
+"color": "a68a8d",
+"thumb": "trims/s_tux4.jpg"
+},
+{
+"id": "s_tux5",
+"kind": "satin",
+"code": "TUX5",
+"name": "TUX5 satin",
+"color": "38171a",
+"thumb": "trims/s_tux5.jpg"
+},
+{
+"id": "s_tux6",
+"kind": "satin",
+"code": "TUX6",
+"name": "TUX6 satin",
+"color": "a8a698",
+"thumb": "trims/s_tux6.jpg"
+},
+{
+"id": "s_tux7",
+"kind": "satin",
+"code": "TUX7",
+"name": "TUX7 satin",
+"color": "4c4a73",
+"thumb": "trims/s_tux7.jpg"
+},
+{
+"id": "s_tux10",
+"kind": "satin",
+"code": "TUX10",
+"name": "TUX10 satin",
+"color": "263043",
+"thumb": "trims/s_tux10.jpg"
+},
+{
+"id": "s_tux13",
+"kind": "satin",
+"code": "TUX13",
+"name": "TUX13 satin",
+"color": "151515",
+"thumb": "trims/s_tux13.jpg"
+},
+{
+"id": "s_tux14",
+"kind": "satin",
+"code": "TUX14",
+"name": "TUX14 satin",
+"color": "90193e",
+"thumb": "trims/s_tux14.jpg"
+},
+{
+"id": "s_tux17",
+"kind": "satin",
+"code": "TUX17",
+"name": "TUX17 satin",
+"color": "9a0e14",
+"thumb": "trims/s_tux17.jpg"
+},
+{
+"id": "s_tux24",
+"kind": "satin",
+"code": "TUX24",
+"name": "TUX24 satin",
+"color": "412564",
+"thumb": "trims/s_tux24.jpg"
+},
+{
+"id": "s_tux26",
+"kind": "satin",
+"code": "TUX26",
+"name": "TUX26 satin",
+"color": "904b11",
+"thumb": "trims/s_tux26.jpg"
+},
+{
+"id": "s_tux28",
+"kind": "satin",
+"code": "TUX28",
+"name": "TUX28 satin",
+"color": "182463",
+"thumb": "trims/s_tux28.jpg"
+},
+{
+"id": "f_f10",
+"kind": "felt",
+"code": "F10",
+"name": "F10 felt",
+"color": "aa715d",
+"thumb": "trims/f_f10.jpg"
+},
+{
+"id": "f_f11",
+"kind": "felt",
+"code": "F11",
+"name": "F11 felt",
+"color": "aba89d",
+"thumb": "trims/f_f11.jpg"
+},
+{
+"id": "f_f12",
+"kind": "felt",
+"code": "F12",
+"name": "F12 felt",
+"color": "363a57",
+"thumb": "trims/f_f12.jpg"
+},
+{
+"id": "f_f13",
+"kind": "felt",
+"code": "F13",
+"name": "F13 felt",
+"color": "846f60",
+"thumb": "trims/f_f13.jpg"
+},
+{
+"id": "f_f14",
+"kind": "felt",
+"code": "F14",
+"name": "F14 felt",
+"color": "502f29",
+"thumb": "trims/f_f14.jpg"
+},
+{
+"id": "f_f15",
+"kind": "felt",
+"code": "F15",
+"name": "F15 felt",
+"color": "c4880b",
+"thumb": "trims/f_f15.jpg"
+},
+{
+"id": "f_f16",
+"kind": "felt",
+"code": "F16",
+"name": "F16 felt",
+"color": "56583a",
+"thumb": "trims/f_f16.jpg"
+},
+{
+"id": "f_f17",
+"kind": "felt",
+"code": "F17",
+"name": "F17 felt",
+"color": "26282d",
+"thumb": "trims/f_f17.jpg"
+},
+{
+"id": "f_f18",
+"kind": "felt",
+"code": "F18",
+"name": "F18 felt",
+"color": "374576",
+"thumb": "trims/f_f18.jpg"
+},
+{
+"id": "f_f19",
+"kind": "felt",
+"code": "F19",
+"name": "F19 felt",
+"color": "ceb093",
+"thumb": "trims/f_f19.jpg"
+},
+{
+"id": "f_f20",
+"kind": "felt",
+"code": "F20",
+"name": "F20 felt",
+"color": "c08d91",
+"thumb": "trims/f_f20.jpg"
+},
+{
+"id": "f_f21",
+"kind": "felt",
+"code": "F21",
+"name": "F21 felt",
+"color": "a84a57",
+"thumb": "trims/f_f21.jpg"
+},
+{
+"id": "f_f22",
+"kind": "felt",
+"code": "F22",
+"name": "F22 felt",
+"color": "810310",
+"thumb": "trims/f_f22.jpg"
+},
+{
+"id": "f_f23",
+"kind": "felt",
+"code": "F23",
+"name": "F23 felt",
+"color": "0273a0",
+"thumb": "trims/f_f23.jpg"
+},
+{
+"id": "f_f24",
+"kind": "felt",
+"code": "F24",
+"name": "F24 felt",
+"color": "6b5246",
+"thumb": "trims/f_f24.jpg"
+},
+{
+"id": "f_f25",
+"kind": "felt",
+"code": "F25",
+"name": "F25 felt",
+"color": "41331f",
+"thumb": "trims/f_f25.jpg"
+},
+{
+"id": "f_f26",
+"kind": "felt",
+"code": "F26",
+"name": "F26 felt",
+"color": "28212c",
+"thumb": "trims/f_f26.jpg"
+},
+{
+"id": "f_f27",
+"kind": "felt",
+"code": "F27",
+"name": "F27 felt",
+"color": "232427",
+"thumb": "trims/f_f27.jpg"
+},
+{
+"id": "t_t01",
+"kind": "thread",
+"code": "T01",
+"name": "T01 thread",
+"color": "f1d524",
+"thumb": "trims/t_t01.jpg"
+},
+{
+"id": "t_t02",
+"kind": "thread",
+"code": "T02",
+"name": "T02 thread",
+"color": "748253",
+"thumb": "trims/t_t02.jpg"
+},
+{
+"id": "t_t03",
+"kind": "thread",
+"code": "T03",
+"name": "T03 thread",
+"color": "313136",
+"thumb": "trims/t_t03.jpg"
+},
+{
+"id": "t_t04",
+"kind": "thread",
+"code": "T04",
+"name": "T04 thread",
+"color": "34aefb",
+"thumb": "trims/t_t04.jpg"
+},
+{
+"id": "t_t05",
+"kind": "thread",
+"code": "T05",
+"name": "T05 thread",
+"color": "603685",
+"thumb": "trims/t_t05.jpg"
+},
+{
+"id": "t_t06",
+"kind": "thread",
+"code": "T06",
+"name": "T06 thread",
+"color": "cee3d3",
+"thumb": "trims/t_t06.jpg"
+},
+{
+"id": "t_t07",
+"kind": "thread",
+"code": "T07",
+"name": "T07 thread",
+"color": "4fe804",
+"thumb": "trims/t_t07.jpg"
+},
+{
+"id": "t_t08",
+"kind": "thread",
+"code": "T08",
+"name": "T08 thread",
+"color": "ffffe7",
+"thumb": "trims/t_t08.jpg"
+},
+{
+"id": "t_t09",
+"kind": "thread",
+"code": "T09",
+"name": "T09 thread",
+"color": "2a3559",
+"thumb": "trims/t_t09.jpg"
+},
+{
+"id": "t_t10",
+"kind": "thread",
+"code": "T10",
+"name": "T10 thread",
+"color": "f4aabe",
+"thumb": "trims/t_t10.jpg"
+},
+{
+"id": "t_t11",
+"kind": "thread",
+"code": "T11",
+"name": "T11 thread",
+"color": "6b98b8",
+"thumb": "trims/t_t11.jpg"
+},
+{
+"id": "t_t12",
+"kind": "thread",
+"code": "T12",
+"name": "T12 thread",
+"color": "706f6d",
+"thumb": "trims/t_t12.jpg"
+},
+{
+"id": "t_t13",
+"kind": "thread",
+"code": "T13",
+"name": "T13 thread",
+"color": "352c2b",
+"thumb": "trims/t_t13.jpg"
+},
+{
+"id": "t_t14",
+"kind": "thread",
+"code": "T14",
+"name": "T14 thread",
+"color": "5f412c",
+"thumb": "trims/t_t14.jpg"
+},
+{
+"id": "t_t15",
+"kind": "thread",
+"code": "T15",
+"name": "T15 thread",
+"color": "87a7d5",
+"thumb": "trims/t_t15.jpg"
+},
+{
+"id": "t_t16",
+"kind": "thread",
+"code": "T16",
+"name": "T16 thread",
+"color": "344699",
+"thumb": "trims/t_t16.jpg"
+},
+{
+"id": "t_t17",
+"kind": "thread",
+"code": "T17",
+"name": "T17 thread",
+"color": "1f5b9a",
+"thumb": "trims/t_t17.jpg"
+},
+{
+"id": "t_t18",
+"kind": "thread",
+"code": "T18",
+"name": "T18 thread",
+"color": "c49837",
+"thumb": "trims/t_t18.jpg"
+},
+{
+"id": "t_t19",
+"kind": "thread",
+"code": "T19",
+"name": "T19 thread",
+"color": "3d3e6d",
+"thumb": "trims/t_t19.jpg"
+},
+{
+"id": "t_t20",
+"kind": "thread",
+"code": "T20",
+"name": "T20 thread",
+"color": "760f0f",
+"thumb": "trims/t_t20.jpg"
+},
+{
+"id": "t_t21",
+"kind": "thread",
+"code": "T21",
+"name": "T21 thread",
+"color": "302b34",
+"thumb": "trims/t_t21.jpg"
+},
+{
+"id": "t_t22",
+"kind": "thread",
+"code": "T22",
+"name": "T22 thread",
+"color": "2d2823",
+"thumb": "trims/t_t22.jpg"
+},
+{
+"id": "t_t23",
+"kind": "thread",
+"code": "T23",
+"name": "T23 thread",
+"color": "575757",
+"thumb": "trims/t_t23.jpg"
+},
+{
+"id": "t_t24",
+"kind": "thread",
+"code": "T24",
+"name": "T24 thread",
+"color": "006263",
+"thumb": "trims/t_t24.jpg"
+},
+{
+"id": "t_t25",
+"kind": "thread",
+"code": "T25",
+"name": "T25 thread",
+"color": "5c2d33",
+"thumb": "trims/t_t25.jpg"
+},
+{
+"id": "t_t26",
+"kind": "thread",
+"code": "T26",
+"name": "T26 thread",
+"color": "a8987e",
+"thumb": "trims/t_t26.jpg"
+},
+{
+"id": "t_t27",
+"kind": "thread",
+"code": "T27",
+"name": "T27 thread",
+"color": "0a091b",
+"thumb": "trims/t_t27.jpg"
+},
+{
+"id": "t_t28",
+"kind": "thread",
+"code": "T28",
+"name": "T28 thread",
+"color": "55292d",
+"thumb": "trims/t_t28.jpg"
+},
+{
+"id": "t_t29",
+"kind": "thread",
+"code": "T29",
+"name": "T29 thread",
+"color": "3a252f",
+"thumb": "trims/t_t29.jpg"
+},
+{
+"id": "t_t30",
+"kind": "thread",
+"code": "T30",
+"name": "T30 thread",
+"color": "2b3a35",
+"thumb": "trims/t_t30.jpg"
+},
+{
+"id": "t_t31",
+"kind": "thread",
+"code": "T31",
+"name": "T31 thread",
+"color": "b50102",
+"thumb": "trims/t_t31.jpg"
+},
+{
+"id": "t_t32",
+"kind": "thread",
+"code": "T32",
+"name": "T32 thread",
+"color": "2e6b51",
+"thumb": "trims/t_t32.jpg"
+},
+{
+"id": "t_t33",
+"kind": "thread",
+"code": "T33",
+"name": "T33 thread",
+"color": "767673",
+"thumb": "trims/t_t33.jpg"
+},
+{
+"id": "t_t34",
+"kind": "thread",
+"code": "T34",
+"name": "T34 thread",
+"color": "aae81e",
+"thumb": "trims/t_t34.jpg"
+},
+{
+"id": "t_t35",
+"kind": "thread",
+"code": "T35",
+"name": "T35 thread",
+"color": "d8d8d8",
+"thumb": "trims/t_t35.jpg"
+},
+{
+"id": "t_t36",
+"kind": "thread",
+"code": "T36",
+"name": "T36 thread",
+"color": "9fa0a6",
+"thumb": "trims/t_t36.jpg"
+},
+{
+"id": "t_t37",
+"kind": "thread",
+"code": "T37",
+"name": "T37 thread",
+"color": "fe8301",
+"thumb": "trims/t_t37.jpg"
+},
+{
+"id": "t_t38",
+"kind": "thread",
+"code": "T38",
+"name": "T38 thread",
+"color": "c77301",
+"thumb": "trims/t_t38.jpg"
+},
+{
+"id": "t_t39",
+"kind": "thread",
+"code": "T39",
+"name": "T39 thread",
+"color": "f0658e",
+"thumb": "trims/t_t39.jpg"
+},
+{
+"id": "t_t40",
+"kind": "thread",
+"code": "T40",
+"name": "T40 thread",
+"color": "d0ecf9",
+"thumb": "trims/t_t40.jpg"
+}
+]
+}
