@@ -1,3 +1,5 @@
+> **Which model file is current? Read MODEL_MAP.md first.** It overrides any 'LATEST' label below (19 Nov 2026).
+
 # MW Tailleur 3D suit — lapels + collar repair
 
 Role, working method and the full check list: @CLAUDE_ROLE.md (follow it every session).

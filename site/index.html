@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MW Tailleur — Bespoke tailoring, designed in 3D</title>
+<meta name="description" content="Bespoke wedding and occasion tailoring. Design your suit in 3D, then book a fitting.">
+<style>
+:root{--bg:#07070a;--ink:#ece8df;--mute:#9a968c;--gold:#c9a45c;--line:rgba(236,232,223,.14);--serif:"Cormorant Garamond","Didot","Bodoni 72",Georgia,serif;--sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+#stage{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 55% 60% at 50% 62%,#1a1812 0%,#0b0b0e 55%,#050506 100%);transition:opacity .6s}
+#stage canvas{display:block;width:100%;height:100%}
+#stage::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.65) 100%);pointer-events:none}
+.grain{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:22px clamp(20px,4vw,56px);mix-blend-mode:difference}
+nav .logo{font-family:var(--serif);font-size:22px;letter-spacing:.32em;text-transform:uppercase;color:#fff;text-decoration:none}
+nav a.cta{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#fff;text-decoration:none;border-bottom:1px solid #fff;padding-bottom:3px}
+main{position:relative;z-index:3}
+.chap{min-height:100vh;display:flex;align-items:center;padding:0 clamp(20px,6vw,96px)}
+.chap .copy{max-width:460px}
+.chap.right{justify-content:flex-end}
+.eyebrow{font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin:0 0 22px}
+h1,h2{font-family:var(--serif);font-weight:400;line-height:1.02;margin:0 0 22px;letter-spacing:-.01em}
+h1{font-size:clamp(46px,7.2vw,112px)}.chap[data-k=hero] .copy{max-width:720px}h2{font-size:clamp(38px,5vw,72px)}
+h1 em,h2 em{font-style:italic;color:var(--gold)}
+p.lead{font-size:clamp(15px,1.25vw,18px);line-height:1.7;color:#c8c4ba;margin:0 0 30px;font-weight:300}
+.btns{display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-block;font:500 11px var(--sans);letter-spacing:.22em;text-transform:uppercase;padding:17px 28px;border:1px solid var(--ink);color:var(--ink);text-decoration:none;background:transparent;cursor:pointer;transition:.25s}
+.btn:hover{background:var(--ink);color:#000}.btn.solid{background:var(--gold);border-color:var(--gold);color:#0a0a0a}.btn.solid:hover{background:#e0be78}
+.picker{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 26px}
+.sw{width:52px;height:52px;border-radius:50%;border:2px solid transparent;outline:1px solid var(--line);outline-offset:3px;cursor:pointer;padding:0;transition:.2s;position:relative}
+.sw.on{border-color:var(--gold);transform:scale(1.08)}
+.sw span{position:absolute;top:62px;left:50%;transform:translateX(-50%);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);white-space:nowrap;opacity:0}
+.sw.on span{opacity:1}
+.picker.names{margin-bottom:46px}
+.seg{display:flex;border:1px solid var(--line);margin:0 0 26px;width:fit-content}
+.seg button{font:500 11px var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--mute);background:none;border:0;padding:16px 26px;cursor:pointer}
+.seg button.on{background:var(--ink);color:#000}
+.chip{display:inline-flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);cursor:pointer;user-select:none}
+.chip i{width:34px;height:18px;border:1px solid var(--line);border-radius:10px;position:relative}
+.chip i::after{content:"";position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:var(--mute);transition:.2s}
+.chip.on{color:var(--ink)}.chip.on i::after{left:18px;background:var(--gold)}
+.steps{list-style:none;margin:0;padding:0;counter-reset:s}
+.steps li{counter-increment:s;padding:18px 0 18px 54px;border-top:1px solid var(--line);position:relative;font-weight:300;color:#c8c4ba;line-height:1.55}
+.steps li::before{content:"0" counter(s);position:absolute;left:0;top:18px;font-family:var(--serif);color:var(--gold);font-size:22px}
+.steps b{display:block;color:var(--ink);font-weight:500;letter-spacing:.04em}
+section.panel{position:relative;z-index:3;background:linear-gradient(#07070a,#0b0b0e);padding:clamp(70px,10vw,140px) clamp(20px,6vw,96px);border-top:1px solid var(--line)}
+section.panel .head{max-width:760px;margin:0 0 48px}
+#builder{padding-bottom:40px}
+.frame{border:1px solid var(--line);height:min(82vh,820px);background:#15161a;position:relative}
+.frame iframe{width:100%;height:100%;border:0;display:block}
+.note{font-size:12px;color:var(--mute);margin:14px 0 0;letter-spacing:.04em}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 34px}
+.tabs button{font:500 11px var(--sans);letter-spacing:.18em;text-transform:uppercase;padding:13px 20px;color:var(--mute);background:none;border:1px solid var(--line);cursor:pointer}
+.tabs button.on{color:#000;background:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px}
+.card{border:1px solid var(--line);padding:28px;display:flex;flex-direction:column;gap:6px;background:rgba(255,255,255,.015);transition:.25s;cursor:pointer;text-align:left;color:inherit;font:inherit}
+.card:hover{border-color:rgba(201,164,92,.6)}.card.on{border-color:var(--gold);background:rgba(201,164,92,.07)}
+.card .tag{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
+.card .nm{font-family:var(--serif);font-size:26px;line-height:1.1;margin:6px 0 12px}
+.card .pr{font-size:15px;margin-top:auto;padding-top:16px}.card .pr small{color:var(--mute);margin-left:6px}
+.card .pick{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);margin-top:12px}
+.card.on .pick{color:var(--gold)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px;margin-top:70px}
+.facts div{border-top:1px solid var(--line);padding-top:16px;font-weight:300;color:#c8c4ba;line-height:1.6;font-size:14px}.facts b{display:block;color:var(--ink);font-weight:500;letter-spacing:.1em;text-transform:uppercase;font-size:11px;margin-bottom:8px}
+footer{position:relative;z-index:3;background:#050506;padding:80px clamp(20px,6vw,96px) 120px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap}
+footer .logo{font-family:var(--serif);font-size:34px;letter-spacing:.3em;text-transform:uppercase}
+footer p{color:var(--mute);font-size:13px;line-height:1.8;margin:12px 0 0;max-width:380px;font-weight:300}
+footer a{color:var(--ink)}
+#bar{position:fixed;left:50%;bottom:22px;transform:translate(-50%,140%);z-index:20;background:var(--ink);color:#000;display:flex;align-items:center;gap:18px;padding:12px 14px 12px 24px;transition:.35s;max-width:calc(100vw - 28px)}
+#bar.show{transform:translate(-50%,0)}#bar span{font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+#bar a{background:#0a0a0a;color:#fff;text-decoration:none;font-size:11px;letter-spacing:.2em;text-transform:uppercase;padding:14px 20px;white-space:nowrap}
+#status{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:5;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--mute);transition:opacity .6s;pointer-events:none}
+.hint{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:6;font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--mute);transition:opacity .5s;pointer-events:none}
+@media(max-width:900px){
+ nav .logo{font-size:17px;letter-spacing:.22em}nav a.cta{white-space:nowrap;font-size:10px}.sw{width:42px;height:42px}.sw span{display:none}.picker{gap:10px}p.lead{font-size:14px;margin-bottom:22px}.chap .copy .eyebrow{margin-bottom:14px}.btn{padding:15px 22px}
+ .chap{align-items:flex-end;padding-bottom:12vh}.chap .copy{max-width:none;background:linear-gradient(transparent,rgba(5,5,6,.82) 30%);padding:60px 0 0;margin:0 -20px;padding-left:20px;padding-right:20px}
+ .chap.right{justify-content:flex-start}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div id="stage"></div><div class="grain"></div>
+<div id="status">Tailoring…</div>
+<nav><a class="logo" href="#top">MW Tailleur</a><a class="cta" href="#builder">Design your suit</a></nav>
+<main id="top">
+ <section class="chap" data-k="hero"><div class="copy">
+  <p class="eyebrow">Bespoke tailoring · London</p>
+  <h1>Made to be <em>remembered.</em></h1>
+  <p class="lead">Wedding and occasion suits, cut for you. Choose the cloth, shape the lapel, see it in 3D, then we measure and make it.</p>
+  <div class="btns"><a class="btn solid" href="#builder">Design your suit</a><a class="btn" href="#packages">Wedding packages</a></div>
+ </div></section>
+ <section class="chap right" data-k="cloth"><div class="copy">
+  <p class="eyebrow">01 · The cloth</p>
+  <h2>Start with the <em>colour.</em></h2>
+  <p class="lead">Tap a shade and the suit changes in front of you. These are previews; your real cloth is chosen from our mill books at your consultation.</p>
+  <div class="picker names" id="cloths"></div>
+  <label class="chip on" id="satinChip"><i></i>Satin lapel</label>
+ </div></section>
+ <section class="chap" data-k="lapel"><div class="copy">
+  <p class="eyebrow">02 · The lapel</p>
+  <h2>Three ways to <em>frame</em> the face.</h2>
+  <p class="lead">Notch is classic. Peak is formal and sharp. Shawl is the dinner-jacket curve with no break at all.</p>
+  <div class="seg" id="lapels"><button data-l="notch">Notch</button><button data-l="peak">Peak</button><button data-l="shawl" class="on">Shawl</button></div>
+  <div class="btns"><a id="sendLook" class="btn solid" target="_blank" rel="noopener">Request this look</a></div>
+ </div></section>
+ <section class="chap right" data-k="process"><div class="copy">
+  <p class="eyebrow">03 · The process</p>
+  <h2>Built <em>on you.</em></h2>
+  <ol class="steps">
+   <li><b>Consultation</b>Remote is complimentary; in person is £50 per session.</li>
+   <li><b>Measure</b>Guided measurements, checked before anything is cut.</li>
+   <li><b>Make</b>Your cloth, your cut. Typically 4–6 weeks (provisional).</li>
+   <li><b>Fit</b>Complimentary circumference alterations.</li>
+  </ol>
+ </div></section>
+</main>
+
+<section class="panel" id="builder" data-k="builder">
+ <div class="head"><p class="eyebrow">The 3D builder</p><h2>Design it <em>yourself.</em></h2>
+  <p class="lead">Swap lapels, trims and buttons, add your own fabric photo, and export a cutting ticket. Drag to turn the suit.</p></div>
+ <div class="frame"><iframe id="cfg" title="MW Tailleur 3D suit builder" data-src="configurator/index.html" loading="lazy" allow="fullscreen"></iframe></div>
+ <p class="note">Early version: the fabric catalogue is being filled from our supplier books. <a style="color:var(--gold)" href="configurator/index.html" target="_blank" rel="noopener">Open full screen</a></p>
+</section>
+
+<section class="panel" id="packages" data-k="packages">
+ <div class="head"><p class="eyebrow">Wedding packages</p><h2>Everything, <em>in one place.</em></h2>
+  <p class="lead">Select the packages you are interested in and send them to us in one message. Prices are in GBP.</p></div>
+ <div class="tabs" id="tabs"></div>
+ <div class="grid" id="grid"></div>
+ <div class="facts">
+  <div><b>Alterations</b>Complimentary circumference alterations. Length alterations are not included.</div>
+  <div><b>Sizing</b>Extra charges may apply above 48 inch measurements or for clients over 6 ft 3.</div>
+  <div><b>Orders</b>Orders begin once payment is received. Priority orders may cost more.</div>
+ </div>
+</section>
+
+<footer>
+ <div><div class="logo">MW Tailleur</div><p>Bespoke tailoring for weddings and occasions. Message us on WhatsApp or email to book a consultation.</p></div>
+ <div><p>WhatsApp <a id="waLink" target="_blank" rel="noopener">+44 7401 885154</a><br>Email <a id="mailLink"></a></p></div>
+</footer>
+
+<div id="bar"><span id="barTxt"></span><a id="barSend" target="_blank" rel="noopener">Send enquiry</a></div>
+<div class="hint" id="hint">Scroll</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

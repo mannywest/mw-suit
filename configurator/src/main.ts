@@ -297,7 +297,7 @@ async function init() {
   if (import.meta.env.VITE_EMBED) { // single-host build: model shipped as base64 in a .js module (host refuses .glb)
     const MID = new URLSearchParams(location.search).get('model') ?? 'shawl'; const { B64 } = MID === 'notch' ? await import('./model-notch') : MID === 'peak' ? await import('./model-peak') : await import('./model-shawl'); const bin = atob(B64), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
     gltf = await loader.parseAsync(u.buffer, '');
-  } else gltf = await loader.loadAsync(base + 'models/' + (new URLSearchParams(location.search).get('model') ?? 'shawl') + '.glb');
+  } else gltf = await loader.loadAsync(base + 'models/' + (new URLSearchParams(location.search).get('model') ?? 'shawl') + '.' + (import.meta.env.VITE_MODEL_EXT ?? 'glb'));
   scene.add(gltf.scene);
   const allMeshes: THREE.Mesh[] = [];
   gltf.scene.traverse(o => { if ((o as THREE.Mesh).isMesh) { (o as THREE.Mesh).castShadow = true; (o as THREE.Mesh).receiveShadow = true; allMeshes.push(o as THREE.Mesh); const mn = ((o as THREE.Mesh).material as THREE.Material).name; meshes[mn === 'Jacket_Wool' ? 'Jacket' : o.name] = o as THREE.Mesh; } });
