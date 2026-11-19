@@ -17,13 +17,40 @@ S = A[ids] + (B[ids] - A[ids]) * r[:, :1] + (C[ids] - A[ids]) * r[:, 1:]; tree =
 d = np.load(shp); V, Fn, N = d['v'].astype(float), d['f'].astype(int), d['n'].astype(float)
 cen = V[Fn].mean(1); _, k = tree.query(cen); t = ids[k]
 fn = np.cross(V[Fn[:, 1]] - V[Fn[:, 0]], V[Fn[:, 2]] - V[Fn[:, 0]]); fn /= np.maximum(np.linalg.norm(fn, axis=1), 1e-12)[:, None]
-side = (fn * nrm[t]).sum(1) > 0      # facing the same way as the old cloth = outer face
+raw = np.where((fn * nrm[t]).sum(1) > 0, 1.0, -1.0)      # facing the same way as the old cloth = outer face
+ct = cKDTree(cen); _, nb = ct.query(cen, k=24)
+for _ in range(3):                                         # neighbours that face the same way vote, so lone flecks flip to the majority
+    same = (fn[nb] * fn[:, None, :]).sum(2) > 0.5; raw = np.sign((raw[nb] * same).sum(1) + 0.01 * raw)
+side = raw > 0
 print('new tris', len(Fn), ' outer side %d  inner side %d' % (side.sum(), (~side).sum()))
+from scipy.sparse import coo_matrix
+from scipy.sparse.csgraph import connected_components
+nv = len(P); ed = np.vstack([F[:, [0, 1]], F[:, [1, 2]]]); _, comp = connected_components(coo_matrix((np.ones(len(ed)), (ed[:, 0], ed[:, 1])), shape=(nv, nv)), directed=False)
+isl_of_tri = comp[F[:, 0]]; print('uv islands', len(np.unique(isl_of_tri)))
+itrees = {}
+for i in np.unique(isl_of_tri):
+    m = isl_of_tri[ids] == i; itrees[i] = (cKDTree(S[m]), ids[m])
+def corner_tri(pts, isl):                 # nearest old triangle INSIDE the same island
+    out = np.zeros(len(pts), int)
+    for i in np.unique(isl):
+        m = isl == i; _, kk = itrees[i][0].query(pts[m]); out[m] = itrees[i][1][kk]
+    return out
+vtrees = {}
+for i in np.unique(isl_of_tri):
+    vv = np.unique(F[isl_of_tri == i]); vtrees[i] = (cKDTree(P[vv]), vv)
+def uv_knn(pts, isl, k=4):                # smooth UV: inverse-distance blend of the nearest old vertices of the same island
+    a0 = np.zeros((len(pts), 2)); a1 = np.zeros((len(pts), 2))
+    for i in np.unique(isl):
+        m = np.where(isl == i)[0]; tr, vv = vtrees[i]; kk = min(k, len(vv)); dd, jj = tr.query(pts[m], k=kk)
+        if kk == 1: dd, jj = dd[:, None], jj[:, None]
+        w = 1.0 / np.maximum(dd, 1e-4) ** 2; w /= w.sum(1, keepdims=True); gv = vv[jj]
+        a0[m] = (w[:, :, None] * U0[gv]).sum(1); a1[m] = (w[:, :, None] * U1[gv]).sum(1)
+    return a0, a1
 def uvfor(pts, tt):                      # barycentric of point projected on old triangle tt, applied to UVs
     a, b, c = P[F[tt, 0]], P[F[tt, 1]], P[F[tt, 2]]; v0, v1, v2 = b - a, c - a, pts - a
     d00 = (v0 * v0).sum(1); d01 = (v0 * v1).sum(1); d11 = (v1 * v1).sum(1); d20 = (v2 * v0).sum(1); d21 = (v2 * v1).sum(1)
     den = np.maximum(d00 * d11 - d01 * d01, 1e-20); w1 = (d11 * d20 - d01 * d21) / den; w2 = (d00 * d21 - d01 * d20) / den
-    w1 = np.clip(w1, -0.3, 1.3); w2 = np.clip(w2, -0.3, 1.3); w0 = 1 - w1 - w2
+    w1 = np.clip(w1, 0, 1); w2 = np.clip(w2, 0, 1); sm = w1 + w2; w1 = np.where(sm > 1, w1 / np.maximum(sm, 1e-9), w1); w2 = np.where(sm > 1, w2 / np.maximum(sm, 1e-9), w2); w0 = 1 - w1 - w2
     f = F[tt]; return w0[:, None] * U0[f[:, 0]] + w1[:, None] * U0[f[:, 1]] + w2[:, None] * U0[f[:, 2]], w0[:, None] * U1[f[:, 0]] + w1[:, None] * U1[f[:, 1]] + w2[:, None] * U1[f[:, 2]]
 def addacc(data, typ, ctype, target, mn=None, mx=None):
     while len(bl) % 4: bl.append(0)
@@ -32,8 +59,11 @@ def addacc(data, typ, ctype, target, mn=None, mx=None):
 lin = Material(name='Jacket_Lining', pbrMetallicRoughness=PbrMetallicRoughness(baseColorFactor=[0.11, 0.15, 0.25, 1], metallicFactor=0.0, roughnessFactor=0.9), doubleSided=False)
 g.materials.append(lin); li = len(g.materials) - 1; new = []
 for sel, mat, dbl in ((side, wp.material, None), (~side, li, None)):
-    ti = np.where(sel)[0]; vi = Fn[ti]; Pp = V[vi].reshape(-1, 3); Nn = N[vi].reshape(-1, 3); tt = np.repeat(t[ti], 3)
-    u0, u1 = uvfor(Pp, tt)
+    ti = np.where(sel)[0]; vi = Fn[ti]; Pp = V[vi].reshape(-1, 3); Nn = N[vi].reshape(-1, 3); u0, u1 = uv_knn(Pp, np.repeat(isl_of_tri[t[ti]], 3))
+    # UV1 is the fabric tile: the old model projects it in world space at 30 mm per tile, so do exactly that (no stretch by construction)
+    nf = np.abs(np.repeat(fn[ti], 3, axis=0)); ax = nf.argmax(1); x, y, z = Pp[:, 0], Pp[:, 1], Pp[:, 2]
+    u1 = np.where(ax[:, None] == 0, np.c_[-33.33 * z, -33.33 * y], np.where(ax[:, None] == 2, np.c_[33.33 * x, -33.33 * y], np.c_[33.33 * x, -33.33 * z]))
+    u1 = u1.astype(float)
     key = np.round(np.hstack([Pp * 1e5, Nn * 1e3, u0 * 1e4, u1 * 1e4])).astype(np.int64); _, first, inv = np.unique(key, axis=0, return_index=True, return_inverse=True)   # weld identical corners
     Pp, Nn, u0, u1 = Pp[first], Nn[first], u0[first], u1[first]; idx = inv.reshape(-1).astype('<u4')
     pa = addacc(Pp.astype('<f4'), 'VEC3', 5126, 34962, Pp.min(0).tolist(), Pp.max(0).tolist()); na = addacc(Nn.astype('<f4'), 'VEC3', 5126, 34962)

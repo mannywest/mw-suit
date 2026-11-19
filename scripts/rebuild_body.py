@@ -34,7 +34,7 @@ dOut = ndi.distance_transform_edt(Dil, sampling=V)        # distance to outside 
 Cl = (dOut > R) | M                                       # erode by R (keep old surface) => closed surface skeleton
 dC = ndi.distance_transform_edt(~Cl, sampling=V)
 field = dC - T / 2
-vt, ft, nt, _ = measure.marching_cubes(field, 0.0, spacing=(V, V, V)); vt = vt + lo
+vt, ft, nt, _ = measure.marching_cubes(field, 0.0, spacing=(V, V, V), allow_degenerate=True); vt = vt + lo
 print('new shell verts', len(vt), 'tris', len(ft), 'time', round(time.time() - t0, 1), 's')
 np.savez_compressed(out, v=vt.astype('f4'), f=ft.astype('u4'), n=nt.astype('f4'))
 # watertight check: every edge used by exactly two triangles

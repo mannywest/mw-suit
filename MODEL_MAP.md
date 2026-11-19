@@ -58,3 +58,8 @@ Build one clean base, then plug notch, peak and shawl onto it. Today only the ba
 ## Rebuild attempt 1 (2026-11-19) - EXPERIMENT, not adopted
 - scripts/rebuild_body.py (voxel closing -> closed 3 mm shell), rebuild_decimate.py (Blender bpy: smooth + decimate to 90k), rebuild_finish.py (wool/lining split, UVs from nearest old triangle, weld).
 - MW_Tailleur_suit_v5_REBUILD_try1(.glb / _no_shirt_waistcoat.glb): big pocket/side/back/hem holes and back seam cracks gone; shell is fully closed. BUT bumpy (261 bumps, max 7.2 mm), UV stretch outliers 7,755 (old ~1,200), lining flecks on outer face, pocket/front-edge detail softened, lapels not rebuilt. stepD stays the base.
+
+## Rebuild attempt 2 (2026-11-19) - EXPERIMENT, not adopted
+- v5_REBUILD_try2(.glb / _no_shirt_waistcoat.glb) replaces try1 (deleted). Finer voxels (2 mm, 3.7 mm shell), vote-cleaned outer/inner split, UV1 = world-space 30 mm tile like the old model.
+- Measured vs stepD: bumps 357 -> 73 (max 13.7 -> 5.4 mm), slivers 756 -> 21, fabric UV stretch 864 -> 0, shell closed (0 open edges). WORSE: inside_out 43 -> 94.
+- Still visible: small lining patches at a pocket flap and ragged hem edge, softer pocket/front-edge detail, faint speckle on back. Lapels not rebuilt.
