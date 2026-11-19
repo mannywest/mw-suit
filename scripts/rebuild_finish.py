@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+"""Put the rebuilt closed shell into a suit GLB.  python3 scripts/rebuild_finish.py OLD.glb SHELL.npz OUT.glb
+Outer-side triangles keep the wool material with UVs copied from the nearest old cloth triangle; inner-side triangles get Jacket_Lining."""
+import sys, os, numpy as np
+HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(HERE, 'check'))
+from pygltflib import GLTF2, Accessor, BufferView, Material, PbrMetallicRoughness, Primitive, Attributes
+from seam5 import rd
+from seam2 import tris
+from scipy.spatial import cKDTree
+old, shp, dst = sys.argv[1:4]
+g = GLTF2().load(old); blob = g.binary_blob(); bl = bytearray(blob); mesh = g.meshes[1]
+wool = next(i for i, p in enumerate(mesh.primitives) if g.materials[p.material].name == 'Jacket_Wool'); wp = mesh.primitives[wool]
+P = rd(g, blob, wp.attributes.POSITION, 3); U0 = rd(g, blob, wp.attributes.TEXCOORD_0, 2); U1 = rd(g, blob, wp.attributes.TEXCOORD_1, 2); F = tris(g, wp.indices)
+A, B, C = P[F[:, 0]], P[F[:, 1]], P[F[:, 2]]; nrm = np.cross(B - A, C - A); ar = np.linalg.norm(nrm, axis=1); nrm /= np.maximum(ar, 1e-12)[:, None]
+ns = np.maximum(3, np.ceil(ar / 2.5e-5).astype(int)); ids = np.repeat(np.arange(len(F)), ns); r = np.random.rand(len(ids), 2); fl = r.sum(1) > 1; r[fl] = 1 - r[fl]
+S = A[ids] + (B[ids] - A[ids]) * r[:, :1] + (C[ids] - A[ids]) * r[:, 1:]; tree = cKDTree(S)
+d = np.load(shp); V, Fn, N = d['v'].astype(float), d['f'].astype(int), d['n'].astype(float)
+cen = V[Fn].mean(1); _, k = tree.query(cen); t = ids[k]
+fn = np.cross(V[Fn[:, 1]] - V[Fn[:, 0]], V[Fn[:, 2]] - V[Fn[:, 0]]); fn /= np.maximum(np.linalg.norm(fn, axis=1), 1e-12)[:, None]
+side = (fn * nrm[t]).sum(1) > 0      # facing the same way as the old cloth = outer face
+print('new tris', len(Fn), ' outer side %d  inner side %d' % (side.sum(), (~side).sum()))
+def uvfor(pts, tt):                      # barycentric of point projected on old triangle tt, applied to UVs
+    a, b, c = P[F[tt, 0]], P[F[tt, 1]], P[F[tt, 2]]; v0, v1, v2 = b - a, c - a, pts - a
+    d00 = (v0 * v0).sum(1); d01 = (v0 * v1).sum(1); d11 = (v1 * v1).sum(1); d20 = (v2 * v0).sum(1); d21 = (v2 * v1).sum(1)
+    den = np.maximum(d00 * d11 - d01 * d01, 1e-20); w1 = (d11 * d20 - d01 * d21) / den; w2 = (d00 * d21 - d01 * d20) / den
+    w1 = np.clip(w1, -0.3, 1.3); w2 = np.clip(w2, -0.3, 1.3); w0 = 1 - w1 - w2
+    f = F[tt]; return w0[:, None] * U0[f[:, 0]] + w1[:, None] * U0[f[:, 1]] + w2[:, None] * U0[f[:, 2]], w0[:, None] * U1[f[:, 0]] + w1[:, None] * U1[f[:, 1]] + w2[:, None] * U1[f[:, 2]]
+def addacc(data, typ, ctype, target, mn=None, mx=None):
+    while len(bl) % 4: bl.append(0)
+    off = len(bl); bl.extend(data.tobytes()); g.bufferViews.append(BufferView(buffer=0, byteOffset=off, byteLength=len(data.tobytes()), target=target))
+    g.accessors.append(Accessor(bufferView=len(g.bufferViews) - 1, componentType=ctype, count=len(data), type=typ, min=mn, max=mx)); return len(g.accessors) - 1
+lin = Material(name='Jacket_Lining', pbrMetallicRoughness=PbrMetallicRoughness(baseColorFactor=[0.11, 0.15, 0.25, 1], metallicFactor=0.0, roughnessFactor=0.9), doubleSided=False)
+g.materials.append(lin); li = len(g.materials) - 1; new = []
+for sel, mat, dbl in ((side, wp.material, None), (~side, li, None)):
+    ti = np.where(sel)[0]; vi = Fn[ti]; Pp = V[vi].reshape(-1, 3); Nn = N[vi].reshape(-1, 3); tt = np.repeat(t[ti], 3)
+    u0, u1 = uvfor(Pp, tt)
+    key = np.round(np.hstack([Pp * 1e5, Nn * 1e3, u0 * 1e4, u1 * 1e4])).astype(np.int64); _, first, inv = np.unique(key, axis=0, return_index=True, return_inverse=True)   # weld identical corners
+    Pp, Nn, u0, u1 = Pp[first], Nn[first], u0[first], u1[first]; idx = inv.reshape(-1).astype('<u4')
+    pa = addacc(Pp.astype('<f4'), 'VEC3', 5126, 34962, Pp.min(0).tolist(), Pp.max(0).tolist()); na = addacc(Nn.astype('<f4'), 'VEC3', 5126, 34962)
+    ua = addacc(u0.astype('<f4'), 'VEC2', 5126, 34962); ub = addacc(u1.astype('<f4'), 'VEC2', 5126, 34962)
+    ia = addacc(idx, 'SCALAR', 5125, 34963)
+    new.append(Primitive(attributes=Attributes(POSITION=pa, NORMAL=na, TEXCOORD_0=ua, TEXCOORD_1=ub), indices=ia, material=mat, mode=4))
+mesh.primitives[wool:wool + 1] = new
+if g.materials[wp.material].doubleSided: g.materials[wp.material].doubleSided = False
+g.buffers[0].byteLength = len(bl); g.set_binary_blob(bytes(bl)); g.save(dst); print('saved', dst)

@@ -54,3 +54,7 @@ Build one clean base, then plug notch, peak and shawl onto it. Today only the ba
 - scripts/add_lining.py adds a real inner lining layer (own material Jacket_Lining, default navy) to any suit GLB. It does NOT close holes; it makes what shows through them the lining colour in any viewer.
 - BASE_stepD_lined = stepD + lining. BASE_stepD_lined_VIEWCOPY_no_shirt_waistcoat = same, with shirt, tie and waistcoat removed to inspect the inside (viewing copy only; the configurator cannot load it).
 - Configurator/website do not use the lining layer yet (their shader still colours inside faces).
+
+## Rebuild attempt 1 (2026-11-19) - EXPERIMENT, not adopted
+- scripts/rebuild_body.py (voxel closing -> closed 3 mm shell), rebuild_decimate.py (Blender bpy: smooth + decimate to 90k), rebuild_finish.py (wool/lining split, UVs from nearest old triangle, weld).
+- MW_Tailleur_suit_v5_REBUILD_try1(.glb / _no_shirt_waistcoat.glb): big pocket/side/back/hem holes and back seam cracks gone; shell is fully closed. BUT bumpy (261 bumps, max 7.2 mm), UV stretch outliers 7,755 (old ~1,200), lining flecks on outer face, pocket/front-edge detail softened, lapels not rebuilt. stepD stays the base.
