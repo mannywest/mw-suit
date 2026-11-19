@@ -49,3 +49,8 @@ Build one clean base, then plug notch, peak and shawl onto it. Today only the ba
 - MW_Tailleur_suit_v4_BASE_stepF3_trimmed.glb = side-panel rebuild (REJECTED 2026-11-19: ragged hem, slivers, more errors than stepD)
 - Full results and caveats: SESSION_LOG_2026-11-19.md. **stepD remains the base to use** (owner decision 2026-11-19: the originals looked better and had fewer errors).
 - MW_Tailleur_suit_v4_SHAWL_step2_frontcut.glb / ..._peak_step3_frontcut.glb = front-edge cut experiments (NOT adopted; shawl tip spike remains; the cut made the notch worse so none was made for notch)
+
+## Lining layer (2026-11-19)
+- scripts/add_lining.py adds a real inner lining layer (own material Jacket_Lining, default navy) to any suit GLB. It does NOT close holes; it makes what shows through them the lining colour in any viewer.
+- BASE_stepD_lined = stepD + lining. BASE_stepD_lined_VIEWCOPY_no_shirt_waistcoat = same, with shirt, tie and waistcoat removed to inspect the inside (viewing copy only; the configurator cannot load it).
+- Configurator/website do not use the lining layer yet (their shader still colours inside faces).
