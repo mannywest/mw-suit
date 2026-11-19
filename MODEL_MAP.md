@@ -3,7 +3,7 @@
 Status words: LIVE = shipped on the website. BASE = lapel-free jacket, the future foundation.
 LATEST = newest of its kind. OLD = earlier step, safe to ignore. UNSURE = I could not confirm.
 
-Checked with `python3 scripts/check_all.py FILE.glb [PREVIOUS.glb]` (neck holes from 6 angles, shirt poke-through, validator).
+Checked with `python3 scripts/check_all.py` (NECK only: holes from 6 angles, shirt poke-through, validator) and `python3 scripts/full_check.py` (WHOLE jacket by area: see-through patches, open edges, shards, spikes, creases, symmetry, UV).
 A low count is necessary, not sufficient. Close-up renders have not been compared yet.
 
 ## 1. What the website uses now (configurator/public/models, matched by triangle counts)
