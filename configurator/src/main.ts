@@ -390,8 +390,13 @@ async function init() {
       if (r.id === 'jacket_body') {
         // v3 GLB ships a real Jacket_Lapel primitive; with the older v2 GLB fall back to the runtime split.
         const lm = allMeshes.find(x => (x.material as THREE.Material).name === 'Jacket_Lapel');
-        if (lm) { lapelMat = (lm.material as THREE.MeshPhysicalMaterial).clone(); lm.material = lapelMat; mesh.userData.lapelNative = true; styleMeshes['notch'] = lm; const pm = allMeshes.find(x => (x.material as THREE.Material).name === 'Jacket_Lapel_Peak'); if (pm) { pm.material = lapelMat; styleMeshes['peak'] = pm; } }
-        const sm0 = allMeshes.find(x => (x.material as THREE.Material).name === 'Jacket_Lapel_Shawl'); if (sm0) { if (!lm) { lapelMat = m.clone(); } sm0.material = lapelMat; styleMeshes['shawl'] = sm0; }
+        const pm = allMeshes.find(x => (x.material as THREE.Material).name === 'Jacket_Lapel_Peak'), sm0 = allMeshes.find(x => (x.material as THREE.Material).name === 'Jacket_Lapel_Shawl');
+        // Each native lapel primitive shares ONE lapel material, so the "Lapel & collar" picker reaches it. Runtime split only when the file has no native lapel at all.
+        let native = false;
+        if (lm) { lapelMat = (lm.material as THREE.MeshPhysicalMaterial).clone(); lm.material = lapelMat; styleMeshes['notch'] = lm; native = true; }
+        if (pm) { if (!native) lapelMat = (pm.material as THREE.MeshPhysicalMaterial).clone(); pm.material = lapelMat; styleMeshes['peak'] = pm; native = true; }
+        if (sm0) { if (!native) lapelMat = m.clone(); sm0.material = lapelMat; styleMeshes['shawl'] = sm0; native = true; }
+        if (native) mesh.userData.lapelNative = true;
         else { lapelMat = m.clone(); console.log('lapel tris (runtime split)', splitLapel(mesh, m, lapelMat)); }
         if (new URLSearchParams(location.search).get('debug') === 'lapel') { lapelMat.onBeforeCompile = sh => { sh.fragmentShader = sh.fragmentShader.replace('#include <dithering_fragment>', 'gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(1.,0.,0.), 0.7);\n#include <dithering_fragment>'); }; } }
     }
