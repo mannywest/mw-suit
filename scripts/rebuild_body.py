@@ -32,8 +32,17 @@ dS = ndi.distance_transform_edt(~M, sampling=V)          # distance to old surfa
 Dil = dS < R                                              # dilate by R
 dOut = ndi.distance_transform_edt(Dil, sampling=V)        # distance to outside of dilated region
 Cl = (dOut > R) | M                                       # erode by R (keep old surface) => closed surface skeleton
+# local extra closing for holes wider than 2R (list in env LOCAL = "x,y,z,sphere_radius_mm,R2_mm;..." ; mirror=1 also does -x)
+loc = os.environ.get('LOCAL', '')
+if loc:
+    gx = lo[0] + np.arange(shp[0]) * V; gy = lo[1] + np.arange(shp[1]) * V; gz = lo[2] + np.arange(shp[2]) * V
+    for item in loc.split(';'):
+        x, y, z, rs, r2 = [float(q) for q in item.split(',')]; r2 /= 1000; rs /= 1000
+        for sx in (1, -1):
+            cx = sx * x; sph = ((gx[:, None, None] - cx) ** 2 + (gy[None, :, None] - y) ** 2 + (gz[None, None, :] - z) ** 2) < rs * rs
+            Dl = dS < r2; Cl2 = (ndi.distance_transform_edt(Dl, sampling=V) > r2) | M; Cl = Cl | (Cl2 & sph); print('local closing at', round(cx, 3), y, z)
 dC = ndi.distance_transform_edt(~Cl, sampling=V)
-field = dC - T / 2
+field = ndi.gaussian_filter(dC - T / 2, float(os.environ.get('FSIG', '1.0')))   # smooth the distance field: removes the orange-peel noise from point sampling
 vt, ft, nt, _ = measure.marching_cubes(field, 0.0, spacing=(V, V, V), allow_degenerate=True); vt = vt + lo
 print('new shell verts', len(vt), 'tris', len(ft), 'time', round(time.time() - t0, 1), 's')
 np.savez_compressed(out, v=vt.astype('f4'), f=ft.astype('u4'), n=nt.astype('f4'))

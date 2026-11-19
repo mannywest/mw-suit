@@ -22,6 +22,31 @@ ct = cKDTree(cen); _, nb = ct.query(cen, k=24)
 for _ in range(3):                                         # neighbours that face the same way vote, so lone flecks flip to the majority
     same = (fn[nb] * fn[:, None, :]).sum(2) > 0.5; raw = np.sign((raw[nb] * same).sum(1) + 0.01 * raw)
 side = raw > 0
+if os.environ.get('RAYSIDE', '1') == '1':                  # arbiter: a ray out of an outer face escapes the garment; one out of an inner face hits the far wall
+    import bpy; from mathutils import Vector
+    from mathutils.bvhtree import BVHTree
+    bvh = BVHTree.FromPolygons([tuple(x) for x in V.tolist()], [tuple(x) for x in Fn.tolist()])
+    hit = np.zeros(len(Fn), bool)
+    for i in range(len(Fn)):
+        o = cen[i] + fn[i] * 0.0008; r_ = bvh.ray_cast(Vector(o), Vector(fn[i]), 0.35); hit[i] = r_[0] is not None
+    ray_side = ~hit; dis = (ray_side != side); print('ray vs vote disagree:', int(dis.sum()), 'of', len(Fn))
+    L = np.where(dis, 0.0, np.where(side, 1.0, -1.0))          # keep only labels both tests agree on, then grow them over the doubtful ones
+    same = (fn[nb] * fn[:, None, :]).sum(2) > 0.6
+    for _ in range(60):
+        unk = L == 0
+        if not unk.any(): break
+        v_ = (L[nb] * same).sum(1); L = np.where(unk & (v_ != 0), np.sign(v_), L)
+    side = np.where(L == 0, side, L > 0); print('doubtful left after growing:', int((L == 0).sum()))
+
+# rim smoothing: vertices shared by outer-labelled and inner-labelled triangles form the cloth's edge (hem, front edge, cuffs). Smooth them ALONG the edge only.
+if os.environ.get('RIM', '0') == '1':
+    nV = len(V); cnt = np.zeros((nV, 2), int); np.add.at(cnt[:, 0], Fn[side].ravel(), 1); np.add.at(cnt[:, 1], Fn[~side].ravel(), 1); rim = (cnt[:, 0] > 0) & (cnt[:, 1] > 0)
+    e_ = np.vstack([Fn[:, [0, 1]], Fn[:, [1, 2]], Fn[:, [2, 0]]]); e_ = e_[rim[e_[:, 0]] & rim[e_[:, 1]]]; e_ = np.unique(np.sort(e_, axis=1), axis=0)
+    deg = np.bincount(e_.ravel(), minlength=nV)
+    for _ in range(int(os.environ.get('RIMIT', '20'))):
+        acc = np.zeros_like(V); np.add.at(acc, e_[:, 0], V[e_[:, 1]]); np.add.at(acc, e_[:, 1], V[e_[:, 0]])
+        m_ = rim & (deg > 0); V[m_] = 0.5 * V[m_] + 0.5 * acc[m_] / deg[m_][:, None]
+    print('rim vertices smoothed:', int(rim.sum()))
 print('new tris', len(Fn), ' outer side %d  inner side %d' % (side.sum(), (~side).sum()))
 from scipy.sparse import coo_matrix
 from scipy.sparse.csgraph import connected_components
@@ -66,6 +91,11 @@ for sel, mat, dbl in ((side, wp.material, None), (~side, li, None)):
     u1 = u1.astype(float)
     key = np.round(np.hstack([Pp * 1e5, Nn * 1e3, u0 * 1e4, u1 * 1e4])).astype(np.int64); _, first, inv = np.unique(key, axis=0, return_index=True, return_inverse=True)   # weld identical corners
     Pp, Nn, u0, u1 = Pp[first], Nn[first], u0[first], u1[first]; idx = inv.reshape(-1).astype('<u4')
+    # shading normals from this layer's own faces only (area-weighted), so edge vertices are not skewed by the other layer
+    Nold = Nn / np.maximum(np.linalg.norm(Nn, axis=1), 1e-12)[:, None]
+    fa = np.cross(Pp[idx.reshape(-1, 3)[:, 1]] - Pp[idx.reshape(-1, 3)[:, 0]], Pp[idx.reshape(-1, 3)[:, 2]] - Pp[idx.reshape(-1, 3)[:, 0]]); Nn = np.zeros_like(Pp)
+    for k_ in range(3): np.add.at(Nn, idx.reshape(-1, 3)[:, k_], fa)
+    ln = np.linalg.norm(Nn, axis=1); Nn = np.where((ln > 1e-9)[:, None], Nn / np.maximum(ln, 1e-12)[:, None], Nold)
     pa = addacc(Pp.astype('<f4'), 'VEC3', 5126, 34962, Pp.min(0).tolist(), Pp.max(0).tolist()); na = addacc(Nn.astype('<f4'), 'VEC3', 5126, 34962)
     ua = addacc(u0.astype('<f4'), 'VEC2', 5126, 34962); ub = addacc(u1.astype('<f4'), 'VEC2', 5126, 34962)
     ia = addacc(idx, 'SCALAR', 5125, 34963)

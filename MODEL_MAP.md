@@ -59,7 +59,8 @@ Build one clean base, then plug notch, peak and shawl onto it. Today only the ba
 - scripts/rebuild_body.py (voxel closing -> closed 3 mm shell), rebuild_decimate.py (Blender bpy: smooth + decimate to 90k), rebuild_finish.py (wool/lining split, UVs from nearest old triangle, weld).
 - MW_Tailleur_suit_v5_REBUILD_try1(.glb / _no_shirt_waistcoat.glb): big pocket/side/back/hem holes and back seam cracks gone; shell is fully closed. BUT bumpy (261 bumps, max 7.2 mm), UV stretch outliers 7,755 (old ~1,200), lining flecks on outer face, pocket/front-edge detail softened, lapels not rebuilt. stepD stays the base.
 
-## Rebuild attempt 2 (2026-11-19) - EXPERIMENT, not adopted
-- v5_REBUILD_try2(.glb / _no_shirt_waistcoat.glb) replaces try1 (deleted). Finer voxels (2 mm, 3.7 mm shell), vote-cleaned outer/inner split, UV1 = world-space 30 mm tile like the old model.
-- Measured vs stepD: bumps 357 -> 73 (max 13.7 -> 5.4 mm), slivers 756 -> 21, fabric UV stretch 864 -> 0, shell closed (0 open edges). WORSE: inside_out 43 -> 94.
-- Still visible: small lining patches at a pocket flap and ragged hem edge, softer pocket/front-edge detail, faint speckle on back. Lapels not rebuilt.
+## Rebuild attempt 3 (2026-11-19) - body only, EXPERIMENT pending user review
+- Replaces try1/try2 (deleted). scripts/rebuild_body.sh runs the whole recipe: voxel closing R=6 mm + local wider closings at the old holes (hip, shoulder top, pocket sides, armhole), smoothed distance field, Blender smooth+decimate to 90k, outer/inner split by normals + ray test + growing, world-space 30 mm fabric UV1, per-layer shading normals.
+- Files: MW_Tailleur_suit_v5_REBUILD_try3.glb and _no_shirt_waistcoat.glb. Lapels NOT rebuilt yet (base has none; notch/peak/shawl pieces are separate prims in their own files).
+- Measured vs stepD: see-through jacket holes -> only the legit front opening/neck remain; bumps 357 -> 1 (max 13.7 -> 3.1 mm); slivers 756 -> 18; spikes 1264 -> 427; inside_out 43 -> 0; fabric UV stretch 864 -> 0; creases back 505 -> 30; shell closed (0 open edges); validator 0 errors.
+- Known: checker still flags two shoulder-top patches seen from one angle only (render looks solid); dark slit under pocket flaps (flap groove, lining colour); front-edge rim slightly rough.

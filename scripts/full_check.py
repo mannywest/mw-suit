@@ -111,7 +111,7 @@ def see_through(prims, want_sheet=False):
     for pr in prims:
         if pr['mat'] in OCCLUDERS_SKIP: continue
         P_all.append(pr['P']); F_all.append(pr['F'] + off)
-        cloth_tri.append(np.full(len(pr['F']), pr['mat'] in CLOTH)); owner += [pr['mat']] * len(pr['F']); off += len(pr['P'])
+        cloth_tri.append(np.full(len(pr['F']), pr['mat'] in CLOTH or pr['mat'] == 'Jacket_Lining')); owner += [pr['mat']] * len(pr['F']); off += len(pr['P'])
     P = np.vstack(P_all); F = np.vstack(F_all); is_cloth = np.concatenate(cloth_tri); owner = np.array(owner, dtype=object)
     Nt, At = tri_normals(P, F); ok = At > 1e-9
     F = F[ok]; Nt = Nt[ok]; is_cloth = is_cloth[ok]; owner = owner[ok]
@@ -130,7 +130,7 @@ def see_through(prims, want_sheet=False):
         vis = ib >= 0; t = np.where(vis, ib, 0)
         front = (Nt[t] @ dv) > 0  # (H,W) via per-pixel gather
         front = np.einsum('ijk,k->ij', Nt[t], dv) > 0
-        mask = vis & is_cloth[t] & (~front)
+        mask = vis & is_cloth[t] & ((~front) | (owner[t] == 'Jacket_Lining'))   # a back face, or the lining layer, nearest to the camera = we are looking into the garment
         mask = ndi.binary_opening(mask, structure=np.ones((2, 2))) if mask.any() else mask
         lab, n = ndi.label(ndi.binary_dilation(mask, iterations=1) & vis)
         masks[(az, el)] = (mask, vis)
