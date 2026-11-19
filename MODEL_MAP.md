@@ -45,6 +45,7 @@ Build one clean base, then plug notch, peak and shawl onto it. Today only the ba
 
 
 ## Added 2026-11-19 (candidates, NOT on the website)
-- MW_Tailleur_suit_v4_BASE_stepE_sides.glb  = stepD + new cloth over pocket-side holes (CANDIDATE)
-- MW_Tailleur_suit_v4_BASE_stepF3_trimmed.glb = latest side-panel rebuild (CANDIDATE, still has hem slivers; lapel area untouched)
-- Full results and caveats: SESSION_LOG_2026-11-19.md. stepD remains the last file that was fully reviewed.
+- MW_Tailleur_suit_v4_BASE_stepE_sides.glb  = stepD + new cloth over pocket-side holes (REJECTED 2026-11-19: less see-through but more edges/bumps/slivers; original looked better)
+- MW_Tailleur_suit_v4_BASE_stepF3_trimmed.glb = side-panel rebuild (REJECTED 2026-11-19: ragged hem, slivers, more errors than stepD)
+- Full results and caveats: SESSION_LOG_2026-11-19.md. **stepD remains the base to use** (owner decision 2026-11-19: the originals looked better and had fewer errors).
+- MW_Tailleur_suit_v4_SHAWL_step2_frontcut.glb / ..._peak_step3_frontcut.glb = front-edge cut experiments (NOT adopted; shawl tip spike remains; the cut made the notch worse so none was made for notch)

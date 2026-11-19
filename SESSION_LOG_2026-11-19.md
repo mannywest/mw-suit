@@ -1,5 +1,7 @@
 # Session log - 2026-11-19 (base jacket side repair, new checks)
 
+## DECISION (owner, end of session): keep the ORIGINAL files. stepE/stepF3 repairs rejected - fewer see-through mm2 but more open edges, bumps, slivers, weave stretch, and the pictures looked worse. stepD stays the base; website models unchanged.
+
 ## Honest status in one paragraph
 Pocket-side see-through area on the lapel-free base was cut from 17,417 to about 3,500 mm2 and the side strip was rebuilt as smooth panels,
 but the result is NOT clean: new open edges and loose pieces were added, the right-side hem still shows ragged slivers, and the front chest /
