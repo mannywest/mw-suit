@@ -1,5 +1,7 @@
 > **Which model file is current? Read MODEL_MAP.md first.** It overrides any 'LATEST' label below (19 Nov 2026).
 
+> **Before saying any model fix works, run `python3 scripts/full_check.py NEW.glb PREVIOUS.glb` (whole jacket, by area) as well as `scripts/check_all.py` (neck only). Report each area as Fixed / Same / Made worse. Add `--sheet out.png` for one combined see-through picture.** (19 Nov 2026: the neck-only check missed pocket, front-edge and shoulder patches.)
+
 # MW Tailleur 3D suit — lapels + collar repair
 
 Role, working method and the full check list: @CLAUDE_ROLE.md (follow it every session).

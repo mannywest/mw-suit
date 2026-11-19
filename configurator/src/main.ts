@@ -39,6 +39,14 @@ let library: Fabric[] = [];
 let lapelMat: THREE.MeshPhysicalMaterial;
 const LAPEL_STYLES: { id: string; name: string; mat: string }[] = [{ id: 'notch', name: 'Notch lapel', mat: 'Jacket_Lapel' }, { id: 'peak', name: 'Peak lapel', mat: 'Jacket_Lapel_Peak' }, { id: 'shawl', name: 'Shawl lapel', mat: 'Jacket_Lapel_Shawl' }];
 const styleMeshes: Record<string, THREE.Mesh> = {}; let lapelStyle = 'notch';
+// Lining: the inside faces of the jacket cloth (seen through the open front) are drawn in a lining colour instead of black. Render-side only; the GLB is unchanged.
+const LININGS: { id: string; name: string; color: number }[] = [{ id: 'match', name: 'Match jacket (default)', color: 0 }, { id: 'navy', name: 'Navy', color: 0x1c2740 }, { id: 'burgundy', name: 'Burgundy', color: 0x5a1a2a }, { id: 'charcoal', name: 'Charcoal', color: 0x34353a }, { id: 'ivory', name: 'Ivory', color: 0xe6e0cf }, { id: 'forest', name: 'Forest green', color: 0x1f3b2c }, { id: 'black', name: 'Black', color: 0x0c0c0e }];
+let liningId = 'match'; const uLining = { value: new THREE.Color(0x1c2740) }, uUseLining = { value: 0 };
+function addLining(mat: THREE.Material) {
+  mat.onBeforeCompile = sh => { sh.uniforms.uLining = uLining; sh.uniforms.uUseLining = uUseLining; sh.fragmentShader = 'uniform vec3 uLining; uniform float uUseLining;\n' + sh.fragmentShader.replace('#include <color_fragment>', '#include <color_fragment>\n if (!gl_FrontFacing && uUseLining > 0.5) { diffuseColor.rgb = uLining; }'); };
+  mat.needsUpdate = true;
+}
+function setLining(id: string) { const l = LININGS.find(x => x.id === id); if (!l) return; liningId = id; uUseLining.value = id === 'match' ? 0 : 1; if (id !== 'match') uLining.value.set(l.color); render(); }
 function setLapelStyle(id: string) { if (!styleMeshes[id]) return; lapelStyle = id; for (const [k, m] of Object.entries(styleMeshes)) m.visible = k === id && state.visible['jacket_body'] !== false; placeLapelHole(); render(); }
 // Lapel buttonhole: a stitched slot on the wearer's left lapel, laid on the lapel surface (found by a ray from the front). Thread colour follows the "Buttonhole thread" trim.
 const HOLE_X = 0.085, HOLE_Y = 1.33, HOLE_TILT = 0.2; // metres / radians; tune per look
@@ -234,7 +242,7 @@ function download(name: string, obj: unknown) {
   a.download = name; a.click();
 }
 function currentConfig(): Config {
-  return { schema: 'mwt.config', version: 1, model: MODEL_FILE.split('/').pop()!, created: new Date().toISOString(), fabrics: { ...state.fabrics }, visible: { ...state.visible }, lapel_style: lapelStyle, trims: { ...trimState } } as Config;
+  return { schema: 'mwt.config', version: 1, model: MODEL_FILE.split('/').pop()!, created: new Date().toISOString(), fabrics: { ...state.fabrics }, visible: { ...state.visible }, lapel_style: lapelStyle, trims: { ...trimState }, lining: liningId } as Config;
 }
 function exportConfig() { download('mw-tailleur-config.json', currentConfig()); }
 function exportTicket() {
@@ -258,6 +266,7 @@ function loadConfig(c: Config) {
   }
   for (const [r, v] of Object.entries(c.visible)) if (REGIONS.some(x => x.id === r && x.toggle)) setVisible(r, !!v);
   if ((c as any).lapel_style) setLapelStyle(String((c as any).lapel_style));
+  if ((c as any).lining) setLining(String((c as any).lining));
   if ((c as any).trims) { Object.assign(trimState, (c as any).trims); applyTrims(scene); }
   buildPanel();
 }
@@ -276,6 +285,7 @@ function publishSummary() { // sends a plain-text summary of the choices to the 
     }
     if (c.visible['tie'] !== false) lines.push('Tie: yes');
     for (const t of trimTicket()) lines.push(t.label + ': ' + t.name);
+    lines.push('Lining: ' + (LININGS.find(x => x.id === liningId)?.name ?? liningId));
     const key = JSON.stringify(lines); if (key === lastSummary) return; lastSummary = key;
     window.parent.postMessage({ type: 'mwt.summary', lines }, '*');
   } catch { /* never break rendering */ }
@@ -342,6 +352,12 @@ function buildPanel() {
       const lb = document.createElement('label'); lb.style.cssText = 'font-size:12px;display:block;margin:2px 0 8px'; const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = customPlain.get(f.id) ?? true; cb.onchange = () => retileCustom(f, cb.checked); lb.append(cb, ' Plain fabric: remove folds and shading'); panel.appendChild(lb); }
   }
   trimPanel(panel, scene, buildPanel, render);
+  panel.insertAdjacentHTML('beforeend', '<h2>Lining (inside of the jacket)</h2>');
+  { const row = document.createElement('div'); row.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px';
+    for (const l of LININGS) { const b = document.createElement('button'); b.title = l.name; b.setAttribute('aria-label', 'Lining ' + l.name);
+      b.style.cssText = 'width:34px;height:34px;border-radius:6px;cursor:pointer;padding:0;border:2px solid ' + (l.id === liningId ? '#c9a45c' : '#444') + ';background:' + (l.id === 'match' ? 'repeating-linear-gradient(45deg,#5a6070,#5a6070 5px,#2a2d36 5px,#2a2d36 10px)' : '#' + l.color.toString(16).padStart(6, '0'));
+      b.onclick = () => { setLining(l.id); buildPanel(); }; row.appendChild(b); }
+    panel.appendChild(row); const sm = document.createElement('small'); sm.style.color = '#8a8a93'; sm.textContent = LININGS.find(x => x.id === liningId)!.name + ' · shown on the model'; panel.appendChild(sm); }
   if (Object.keys(styleMeshes).length > 1) {
 
     panel.insertAdjacentHTML('beforeend', '<h2>Lapel style</h2>');
@@ -390,9 +406,15 @@ async function init() {
       if (r.id === 'jacket_body') {
         // v3 GLB ships a real Jacket_Lapel primitive; with the older v2 GLB fall back to the runtime split.
         const lm = allMeshes.find(x => (x.material as THREE.Material).name === 'Jacket_Lapel');
-        if (lm) { lapelMat = (lm.material as THREE.MeshPhysicalMaterial).clone(); lm.material = lapelMat; mesh.userData.lapelNative = true; styleMeshes['notch'] = lm; const pm = allMeshes.find(x => (x.material as THREE.Material).name === 'Jacket_Lapel_Peak'); if (pm) { pm.material = lapelMat; styleMeshes['peak'] = pm; } }
-        const sm0 = allMeshes.find(x => (x.material as THREE.Material).name === 'Jacket_Lapel_Shawl'); if (sm0) { if (!lm) { lapelMat = m.clone(); } sm0.material = lapelMat; styleMeshes['shawl'] = sm0; }
+        const pm = allMeshes.find(x => (x.material as THREE.Material).name === 'Jacket_Lapel_Peak'), sm0 = allMeshes.find(x => (x.material as THREE.Material).name === 'Jacket_Lapel_Shawl');
+        // Each native lapel primitive shares ONE lapel material, so the "Lapel & collar" picker reaches it. Runtime split only when the file has no native lapel at all.
+        let native = false;
+        if (lm) { lapelMat = (lm.material as THREE.MeshPhysicalMaterial).clone(); lm.material = lapelMat; styleMeshes['notch'] = lm; native = true; }
+        if (pm) { if (!native) lapelMat = (pm.material as THREE.MeshPhysicalMaterial).clone(); pm.material = lapelMat; styleMeshes['peak'] = pm; native = true; }
+        if (sm0) { if (!native) lapelMat = m.clone(); sm0.material = lapelMat; styleMeshes['shawl'] = sm0; native = true; }
+        if (native) mesh.userData.lapelNative = true;
         else { lapelMat = m.clone(); console.log('lapel tris (runtime split)', splitLapel(mesh, m, lapelMat)); }
+        addLining(m); addLining(lapelMat);
         if (new URLSearchParams(location.search).get('debug') === 'lapel') { lapelMat.onBeforeCompile = sh => { sh.fragmentShader = sh.fragmentShader.replace('#include <dithering_fragment>', 'gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(1.,0.,0.), 0.7);\n#include <dithering_fragment>'); }; } }
     }
     if (r.toggle) state.visible[r.id] = true;
