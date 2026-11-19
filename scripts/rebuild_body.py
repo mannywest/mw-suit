@@ -15,7 +15,7 @@ V = float(sys.argv[4]) / 1000 if len(sys.argv) > 4 else 0.0025; T = float(sys.ar
 g = GLTF2().load(src); blob = g.binary_blob(); mesh = g.meshes[1]
 P = None; F = []
 for p in mesh.primitives:
-    if g.materials[p.material].name == 'Jacket_Wool':
+    if g.materials[p.material].name == os.environ.get('MAT', 'Jacket_Wool'):
         P = rd(g, blob, p.attributes.POSITION, 3); F.append(tris(g, p.indices))
 F = np.vstack(F); used = np.unique(F); print('cloth tris', len(F), 'verts', len(used), 'bbox', P[used].min(0).round(3), P[used].max(0).round(3))
 lo = P[used].min(0) - R * 3; hi = P[used].max(0) + R * 3; shp = np.ceil((hi - lo) / V).astype(int) + 1; print('grid', shp, shp.prod() / 1e6, 'M')

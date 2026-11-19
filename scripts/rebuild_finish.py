@@ -9,7 +9,7 @@ from seam2 import tris
 from scipy.spatial import cKDTree
 old, shp, dst = sys.argv[1:4]
 g = GLTF2().load(old); blob = g.binary_blob(); bl = bytearray(blob); mesh = g.meshes[1]
-wool = next(i for i, p in enumerate(mesh.primitives) if g.materials[p.material].name == 'Jacket_Wool'); wp = mesh.primitives[wool]
+wool = next(i for i, p in enumerate(mesh.primitives) if g.materials[p.material].name == os.environ.get('MAT', 'Jacket_Wool')); wp = mesh.primitives[wool]
 P = rd(g, blob, wp.attributes.POSITION, 3); U0 = rd(g, blob, wp.attributes.TEXCOORD_0, 2); U1 = rd(g, blob, wp.attributes.TEXCOORD_1, 2); F = tris(g, wp.indices)
 A, B, C = P[F[:, 0]], P[F[:, 1]], P[F[:, 2]]; nrm = np.cross(B - A, C - A); ar = np.linalg.norm(nrm, axis=1); nrm /= np.maximum(ar, 1e-12)[:, None]
 ns = np.maximum(3, np.ceil(ar / 2.5e-5).astype(int)); ids = np.repeat(np.arange(len(F)), ns); r = np.random.rand(len(ids), 2); fl = r.sum(1) > 1; r[fl] = 1 - r[fl]
@@ -47,6 +47,23 @@ if os.environ.get('RIM', '0') == '1':
         acc = np.zeros_like(V); np.add.at(acc, e_[:, 0], V[e_[:, 1]]); np.add.at(acc, e_[:, 1], V[e_[:, 0]])
         m_ = rim & (deg > 0); V[m_] = 0.5 * V[m_] + 0.5 * acc[m_] / deg[m_][:, None]
     print('rim vertices smoothed:', int(rim.sum()))
+if os.environ.get('INNER', 'lining') == 'wool': side[:] = True          # lapels: the underside is cloth too
+# final fleck cleanup: a triangle whose same-facing neighbours nearly all carry the other label takes theirs
+for _ in range(2):
+    sg = np.where(side, 1.0, -1.0); same2 = (fn[nb] * fn[:, None, :]).sum(2) > 0.6; vote = (sg[nb] * same2).sum(1) / np.maximum(same2.sum(1), 1)
+    side = np.where(np.abs(vote) > 0.6, vote > 0, side)
+if os.environ.get('INNER', 'lining') != 'wool':           # near the cloth's OLD edges (front edge, hem, neck, cuffs, hole rims) the inner face stays cloth
+    ee = np.sort(np.vstack([F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]]), axis=1); ue, ce = np.unique(ee, axis=0, return_counts=True); bv = np.unique(ue[ce == 1])
+    if len(bv): _, dd_ = cKDTree(P[bv]).query(cen); side = side | (dd_ < float(os.environ.get('EDGE_MM', '8')) / 1000)
+dot_old = (fn * nrm[t]).sum(1); edge_band = np.abs(dot_old) < float(os.environ.get('EDGEBAND', '0.5'))
+side = side | edge_band                                      # the thickness band at cloth edges is cloth, not lining
+print('edge-band triangles made cloth:', int(edge_band.sum()))
+# the shell's outer face sits half a thickness proud of the old surface: move the WHOLE shell inward (both layers the same way) so buttons/trim sit on it as before
+dsh = float(os.environ.get('SHIFT_MM', '0.9')) / 1000
+if dsh > 0:
+    o_t = np.where(dot_old >= 0, 1.0, -1.0)[:, None] * fn; acc_ = np.zeros_like(V)
+    for k_ in range(3): np.add.at(acc_, Fn[:, k_], o_t)
+    acc_ /= np.maximum(np.linalg.norm(acc_, axis=1), 1e-9)[:, None]; V = V - acc_ * dsh
 print('new tris', len(Fn), ' outer side %d  inner side %d' % (side.sum(), (~side).sum()))
 from scipy.sparse import coo_matrix
 from scipy.sparse.csgraph import connected_components
@@ -82,9 +99,14 @@ def addacc(data, typ, ctype, target, mn=None, mx=None):
     off = len(bl); bl.extend(data.tobytes()); g.bufferViews.append(BufferView(buffer=0, byteOffset=off, byteLength=len(data.tobytes()), target=target))
     g.accessors.append(Accessor(bufferView=len(g.bufferViews) - 1, componentType=ctype, count=len(data), type=typ, min=mn, max=mx)); return len(g.accessors) - 1
 lin = Material(name='Jacket_Lining', pbrMetallicRoughness=PbrMetallicRoughness(baseColorFactor=[0.11, 0.15, 0.25, 1], metallicFactor=0.0, roughnessFactor=0.9), doubleSided=False)
-g.materials.append(lin); li = len(g.materials) - 1; new = []
+ex = [i for i, m in enumerate(g.materials) if m.name == 'Jacket_Lining']
+if ex: li = ex[0]
+else: g.materials.append(lin); li = len(g.materials) - 1
+new = []
 for sel, mat, dbl in ((side, wp.material, None), (~side, li, None)):
-    ti = np.where(sel)[0]; vi = Fn[ti]; Pp = V[vi].reshape(-1, 3); Nn = N[vi].reshape(-1, 3); u0, u1 = uv_knn(Pp, np.repeat(isl_of_tri[t[ti]], 3))
+    ti = np.where(sel)[0]
+    if len(ti) == 0: continue
+    vi = Fn[ti]; Pp = V[vi].reshape(-1, 3); Nn = N[vi].reshape(-1, 3); u0, u1 = uv_knn(Pp, np.repeat(isl_of_tri[t[ti]], 3))
     # UV1 is the fabric tile: the old model projects it in world space at 30 mm per tile, so do exactly that (no stretch by construction)
     nf = np.abs(np.repeat(fn[ti], 3, axis=0)); ax = nf.argmax(1); x, y, z = Pp[:, 0], Pp[:, 1], Pp[:, 2]
     u1 = np.where(ax[:, None] == 0, np.c_[-33.33 * z, -33.33 * y], np.where(ax[:, None] == 2, np.c_[33.33 * x, -33.33 * y], np.c_[33.33 * x, -33.33 * z]))
