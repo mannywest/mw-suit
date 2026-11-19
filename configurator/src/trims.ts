@@ -8,7 +8,7 @@ export interface TrimSlot { id: string; label: string; kind: TrimItem['kind'] | 
 export const SLOTS: TrimSlot[] = [
   { id: 'button', label: 'Buttons', kind: 'button', onModel: true, note: 'Shown on the suit (colour approximate)' },
   { id: 'thread', label: 'Buttonhole thread', kind: 'thread', onModel: true, note: 'Shown on the suit (also used on the order spec)' },
-  { id: 'hole', label: 'Milanese buttonhole style', kind: 'hole', onModel: false, note: 'Order spec only (not drawn on the model)' },
+  { id: 'hole', label: 'Milanese buttonhole style', kind: 'hole', onModel: true, note: 'Shown on the left lapel for 03-07 and 09-11; 01, 02 and 08 show as a plain slot' },
   { id: 'felt', label: 'Under-collar felt', kind: 'felt', onModel: false, note: 'Order spec only (hidden under the collar)' },
 ];
 let items: TrimItem[] = []; let holes: string[] = [];
@@ -30,6 +30,7 @@ export function applyTrims(scene: THREE.Object3D) {
       m.map = null; m.color.set(parseInt(b.color, 16)); const f = b.finish ?? 'horn';
       m.metalness = f === 'metal' ? 0.9 : 0; m.roughness = f === 'metal' ? 0.3 : f === 'gloss' ? 0.2 : f === 'shell' ? 0.25 : 0.4; m.needsUpdate = true;
     }
+    if (m.name === 'LapelHole' && t) { m.color.set(parseInt(t.color, 16)); m.needsUpdate = true; }
     if (m.name === 'Buttons' && t) { m.map = null; m.color.set(parseInt(t.color, 16)); m.needsUpdate = true; }
   });
 }

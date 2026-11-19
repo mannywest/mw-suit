@@ -39,7 +39,69 @@ let library: Fabric[] = [];
 let lapelMat: THREE.MeshPhysicalMaterial;
 const LAPEL_STYLES: { id: string; name: string; mat: string }[] = [{ id: 'notch', name: 'Notch lapel', mat: 'Jacket_Lapel' }, { id: 'peak', name: 'Peak lapel', mat: 'Jacket_Lapel_Peak' }, { id: 'shawl', name: 'Shawl lapel', mat: 'Jacket_Lapel_Shawl' }];
 const styleMeshes: Record<string, THREE.Mesh> = {}; let lapelStyle = 'notch';
-function setLapelStyle(id: string) { if (!styleMeshes[id]) return; lapelStyle = id; for (const [k, m] of Object.entries(styleMeshes)) m.visible = k === id && state.visible['jacket_body'] !== false; render(); }
+function setLapelStyle(id: string) { if (!styleMeshes[id]) return; lapelStyle = id; for (const [k, m] of Object.entries(styleMeshes)) m.visible = k === id && state.visible['jacket_body'] !== false; placeLapelHole(); render(); }
+// Lapel buttonhole: a stitched slot on the wearer's left lapel, laid on the lapel surface (found by a ray from the front). Thread colour follows the "Buttonhole thread" trim.
+const HOLE_X = 0.085, HOLE_Y = 1.33, HOLE_TILT = 0.2; // metres / radians; tune per look
+let holeMesh: THREE.Mesh | null = null;
+// --- buttonhole designs (traced by eye from the trims-book photo; mm in a 2D plane, x = long axis). 01, 02 and 08 not drawn yet -> plain slot.
+type Pt = [number, number];
+const arcPts = (cx: number, cy: number, rx: number, ry: number, a0: number, a1: number, n = 24): Pt[] => Array.from({ length: n + 1 }, (_, i) => { const a = a0 + (a1 - a0) * i / n; return [cx + rx * Math.cos(a), cy + ry * Math.sin(a)] as Pt; });
+const heartPts = (cx: number, cy: number, sc: number, n = 40): Pt[] => Array.from({ length: n }, (_, i) => { const t = i / n * 2 * Math.PI; return [cx + sc * 16 * Math.sin(t) ** 3 / 16, cy + sc * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) / 16] as Pt; });
+const line = (x0: number, x1: number, y = 0): Pt[] => [[x0, y], [x1, y]];
+const slotOutline = (c: Pt[], h: (t: number) => number): Pt[] => { // closed outline round a centreline with half-width h(t)
+  const L: Pt[] = [], R: Pt[] = [], n = c.length;
+  for (let i = 0; i < n; i++) { const a = c[Math.max(0, i - 1)], b = c[Math.min(n - 1, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], d = Math.hypot(dx, dy) || 1, w = h(i / (n - 1)); L.push([c[i][0] - dy / d * w, c[i][1] + dx / d * w]); R.push([c[i][0] + dy / d * w, c[i][1] - dx / d * w]); }
+  const cap = (e: Pt, from: Pt): Pt[] => { const cx = e[0], cy = e[1], a0 = Math.atan2(from[1] - cy, from[0] - cx), r = Math.hypot(from[0] - cx, from[1] - cy); return Array.from({ length: 7 }, (_, i) => { const a = a0 - Math.PI * (i / 6); return [cx + r * Math.cos(a), cy + r * Math.sin(a)] as Pt; }); };
+  const endCap = cap(c[n - 1], L[n - 1]), startCap = cap(c[0], R[0]);
+  return [...L, ...endCap, ...R.slice().reverse(), ...startCap];
+};
+const bendC = (x0: number, x1: number, f: (t: number) => number, n = 24): Pt[] => Array.from({ length: n + 1 }, (_, i) => { const t = i / n; return [x0 + (x1 - x0) * t, f(t)] as Pt; });
+interface HoleDesign { strokes: { pts: Pt[]; closed: boolean; w: number }[] }
+const HOLE_DESIGNS: Record<string, HoleDesign> = {
+  '04': { strokes: [{ pts: line(-11, 3), closed: false, w: 0.8 }, { pts: slotOutline(line(1, 11), () => 1.3), closed: true, w: 0.8 }] },
+  '05': { strokes: [{ pts: line(-11, 5.5), closed: false, w: 0.9 }, { pts: arcPts(8, 0, 2.4, 2.4, 0, 2 * Math.PI, 28).slice(0, -1), closed: true, w: 0.9 }] },
+  '07': { strokes: [{ pts: slotOutline(line(-9.5, 9.5), () => 2.6), closed: true, w: 1.5 }] },
+  '11': { strokes: [{ pts: slotOutline(line(-9.5, 9.5), () => 1.7), closed: true, w: 1.6 }] },
+  '03': { strokes: [{ pts: line(-11, 4.5), closed: false, w: 0.9 }, { pts: heartPts(7.5, 0, 3.6).map(([x, y]) => [7.5 + y, x - 7.5] as Pt), closed: true, w: 0.8 }] },
+  '06': { strokes: [{ pts: line(-11, 3.5, 0), closed: false, w: 1.1 }, { pts: heartPts(7, 0, 5).map(([x, y]) => [7 + y, x - 7] as Pt), closed: true, w: 1 }] },
+  '09': { strokes: [{ pts: slotOutline(bendC(-11, 11, t => 3.2 * Math.sin(Math.PI * t) * (1 - 0.3 * t) - 1.6), t => 1.0 + 0.5 * t), closed: true, w: 0.8 }] },
+  '10': { strokes: [{ pts: slotOutline(bendC(-11, 10, t => -5 + 8 * (1 - (1 - t) ** 2.2)), t => 0.4 + 1.3 * t), closed: true, w: 0.8 }] },
+};
+function ribbon(pts: Pt[], closed: boolean, w: number): THREE.BufferGeometry { // thin flat stroke along a polyline, in metres
+  const n = pts.length, pos: number[] = [], idx: number[] = [], m = 0.001, segs = closed ? n : n - 1;
+  for (let i = 0; i < n; i++) {
+    const a = pts[closed ? (i + n - 1) % n : Math.max(0, i - 1)], b = pts[closed ? (i + 1) % n : Math.min(n - 1, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], d = Math.hypot(dx, dy) || 1, nx = -dy / d * w / 2, ny = dx / d * w / 2;
+    pos.push((pts[i][0] + nx) * m, (pts[i][1] + ny) * m, 0, (pts[i][0] - nx) * m, (pts[i][1] - ny) * m, 0);
+  }
+  for (let i = 0; i < segs; i++) { const a = i * 2, b = ((i + 1) % n) * 2; idx.push(a, a + 1, b, a + 1, b + 1, b); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals(); return g;
+}
+function holeGeometry(style: string): THREE.BufferGeometry {
+  const d = HOLE_DESIGNS[style] ?? HOLE_DESIGNS['11'], parts = d.strokes.map(st => ribbon(st.pts, st.closed, st.w));
+  const pos: number[] = [], idx: number[] = []; let off = 0;
+  for (const g of parts) { const p = g.getAttribute('position'); for (let i = 0; i < p.count; i++) pos.push(p.getX(i), p.getY(i), p.getZ(i)); for (const i of g.getIndex()!.array) idx.push(i + off); off += p.count; }
+  const out = new THREE.BufferGeometry(); out.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); out.setIndex(idx); out.computeVertexNormals(); return out;
+}
+let holeStyle = '';
+function syncHoleStyle() { if (!holeMesh) return; const st = (trimState['hole'] ?? 'hole_11').replace('hole_', ''); if (st === holeStyle) return; holeStyle = st; holeMesh.geometry.dispose(); holeMesh.geometry = holeGeometry(st); }
+function makeHoleMesh(): THREE.Mesh {
+  const mat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.6, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 }); mat.name = 'LapelHole';
+  const m = new THREE.Mesh(holeGeometry('11'), mat); m.renderOrder = 2; holeStyle = '11'; return m;
+}
+function placeLapelHole() {
+  let lm: THREE.Mesh | undefined = styleMeshes[lapelStyle];
+  if (!lm) scene.traverse(o => { const m = o as THREE.Mesh; if (m.isMesh && (m.material as THREE.Material)?.name === 'Jacket_Lapel_Peak') lm = m; }); // peak.glb: lapel not in styleMeshes
+  if (!lm) return;
+  if (!holeMesh) { holeMesh = makeHoleMesh(); scene.add(holeMesh); applyTrims(scene); }
+  lm.updateWorldMatrix(true, false);
+  const hit = new THREE.Raycaster(new THREE.Vector3(HOLE_X, HOLE_Y, 1), new THREE.Vector3(0, 0, -1)).intersectObject(lm, false)[0];
+  if (!hit || !hit.face) { holeMesh.visible = false; return; }
+  const n = hit.face.normal.clone().transformDirection(lm.matrixWorld); if (n.z < 0) n.negate();
+  const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), n);
+  const tilt = new THREE.Quaternion().setFromAxisAngle(n, HOLE_TILT);
+  holeMesh.quaternion.copy(tilt.multiply(q));
+  holeMesh.position.copy(hit.point).addScaledVector(n, 0.0007); holeMesh.visible = state.visible['jacket_body'] !== false;
+}
 
 const fabSrc = (f: Fabric) => (f.file.startsWith('blob:') ? f.file : import.meta.env.BASE_URL + 'fabrics/' + f.file.replace('fabrics/', ''));
 let customN = 0;
@@ -199,7 +261,25 @@ function loadConfig(c: Config) {
   if ((c as any).trims) { Object.assign(trimState, (c as any).trims); applyTrims(scene); }
   buildPanel();
 }
-function render() { renderer.render(scene, camera); }
+function render() { syncHoleStyle(); renderer.render(scene, camera); publishSummary(); }
+let lastSummary = '';
+function publishSummary() { // sends a plain-text summary of the choices to the hosting page (landing page iframe)
+  try {
+    if (window.parent === window || !library.length) return;
+    const c = currentConfig(), lines: string[] = [];
+    const nm = (id: string) => { const f = library.find(x => x.id === id), fin = FINISHES.find(x => x.id === id); return f ? (f.code ? f.code + ' ' : '') + f.name : fin?.name ?? id; };
+    lines.push('Lapel: ' + (LAPEL_STYLES.find(x => x.id === lapelStyle)?.name ?? lapelStyle));
+    for (const r of REGIONS.filter(x => x.fabric)) {
+      if (c.visible[r.id] === false) continue;
+      let id = c.fabrics[r.id]; if (id === 'match') id = c.fabrics.jacket_body;
+      lines.push(r.label + ': ' + nm(id));
+    }
+    if (c.visible['tie'] !== false) lines.push('Tie: yes');
+    for (const t of trimTicket()) lines.push(t.label + ': ' + t.name);
+    const key = JSON.stringify(lines); if (key === lastSummary) return; lastSummary = key;
+    window.parent.postMessage({ type: 'mwt.summary', lines }, '*');
+  } catch { /* never break rendering */ }
+}
 function resize() { const w = view.clientWidth, h = view.clientHeight; renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); render(); }
 addEventListener('resize', resize); controls.addEventListener('change', render);
 (function loop() { requestAnimationFrame(loop); controls.update(); })();
@@ -343,10 +423,11 @@ async function init() {
   const dflt = (library.find(x => x.id === 'p45') ?? library[0]).id;
   state.fabrics = { jacket_body: dflt, jacket_lapel: 'match', waistcoat_body: dflt, trousers_body: dflt };
   setLapelStyle(Object.keys(styleMeshes)[0] ?? 'notch');
+  placeLapelHole();
   buildPanel(); resize();
   for (const [r, f] of Object.entries(state.fabrics)) applyFabric(r, f);
   applyTrims(scene);
   const dbg = { size: size.toArray().map(v => +v.toFixed(3)), meshes: Object.keys(meshes) };
-  status.textContent = 'ready ' + JSON.stringify(dbg); (window as any).__mwt = { setTrim: (s: string, i: string) => { setTrim(s, i, scene); render(); }, setLapelStyle, meshes, loadConfig, exportTicket, currentConfig, applyFabric, setVisible, state, camera, controls, render };
+  status.textContent = 'ready ' + JSON.stringify(dbg); (window as any).__mwt = { scene, styleMeshes, setTrim: (s: string, i: string) => { setTrim(s, i, scene); render(); }, setLapelStyle, meshes, loadConfig, exportTicket, currentConfig, applyFabric, setVisible, state, camera, controls, render };
 }
 init().catch(e => { status.textContent = 'ERROR ' + e; console.error(e); });
