@@ -40,13 +40,13 @@ let lapelMat: THREE.MeshPhysicalMaterial;
 const LAPEL_STYLES: { id: string; name: string; mat: string }[] = [{ id: 'notch', name: 'Notch lapel', mat: 'Jacket_Lapel' }, { id: 'peak', name: 'Peak lapel', mat: 'Jacket_Lapel_Peak' }, { id: 'shawl', name: 'Shawl lapel', mat: 'Jacket_Lapel_Shawl' }];
 const styleMeshes: Record<string, THREE.Mesh> = {}; let lapelStyle = 'notch';
 // Lining: the inside faces of the jacket cloth (seen through the open front) are drawn in a lining colour instead of black. Render-side only; the GLB is unchanged.
-const LININGS = [{ id: 'navy', name: 'Navy', color: 0x1c2740 }, { id: 'burgundy', name: 'Burgundy', color: 0x5a1a2a }, { id: 'charcoal', name: 'Charcoal', color: 0x34353a }, { id: 'ivory', name: 'Ivory', color: 0xe6e0cf }, { id: 'forest', name: 'Forest green', color: 0x1f3b2c }, { id: 'black', name: 'Black', color: 0x0c0c0e }];
-let liningId = 'navy'; const uLining = { value: new THREE.Color(LININGS[0].color) };
+const LININGS: { id: string; name: string; color: number }[] = [{ id: 'match', name: 'Match jacket (default)', color: 0 }, { id: 'navy', name: 'Navy', color: 0x1c2740 }, { id: 'burgundy', name: 'Burgundy', color: 0x5a1a2a }, { id: 'charcoal', name: 'Charcoal', color: 0x34353a }, { id: 'ivory', name: 'Ivory', color: 0xe6e0cf }, { id: 'forest', name: 'Forest green', color: 0x1f3b2c }, { id: 'black', name: 'Black', color: 0x0c0c0e }];
+let liningId = 'match'; const uLining = { value: new THREE.Color(0x1c2740) }, uUseLining = { value: 0 };
 function addLining(mat: THREE.Material) {
-  mat.onBeforeCompile = sh => { sh.uniforms.uLining = uLining; sh.fragmentShader = 'uniform vec3 uLining;\n' + sh.fragmentShader.replace('#include <color_fragment>', '#include <color_fragment>\n if (!gl_FrontFacing) { diffuseColor.rgb = uLining; }'); };
+  mat.onBeforeCompile = sh => { sh.uniforms.uLining = uLining; sh.uniforms.uUseLining = uUseLining; sh.fragmentShader = 'uniform vec3 uLining; uniform float uUseLining;\n' + sh.fragmentShader.replace('#include <color_fragment>', '#include <color_fragment>\n if (!gl_FrontFacing && uUseLining > 0.5) { diffuseColor.rgb = uLining; }'); };
   mat.needsUpdate = true;
 }
-function setLining(id: string) { const l = LININGS.find(x => x.id === id); if (!l) return; liningId = id; uLining.value.set(l.color); render(); }
+function setLining(id: string) { const l = LININGS.find(x => x.id === id); if (!l) return; liningId = id; uUseLining.value = id === 'match' ? 0 : 1; if (id !== 'match') uLining.value.set(l.color); render(); }
 function setLapelStyle(id: string) { if (!styleMeshes[id]) return; lapelStyle = id; for (const [k, m] of Object.entries(styleMeshes)) m.visible = k === id && state.visible['jacket_body'] !== false; placeLapelHole(); render(); }
 // Lapel buttonhole: a stitched slot on the wearer's left lapel, laid on the lapel surface (found by a ray from the front). Thread colour follows the "Buttonhole thread" trim.
 const HOLE_X = 0.085, HOLE_Y = 1.33, HOLE_TILT = 0.2; // metres / radians; tune per look
@@ -355,7 +355,7 @@ function buildPanel() {
   panel.insertAdjacentHTML('beforeend', '<h2>Lining (inside of the jacket)</h2>');
   { const row = document.createElement('div'); row.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px';
     for (const l of LININGS) { const b = document.createElement('button'); b.title = l.name; b.setAttribute('aria-label', 'Lining ' + l.name);
-      b.style.cssText = 'width:34px;height:34px;border-radius:6px;cursor:pointer;padding:0;border:2px solid ' + (l.id === liningId ? '#c9a45c' : '#444') + ';background:#' + l.color.toString(16).padStart(6, '0');
+      b.style.cssText = 'width:34px;height:34px;border-radius:6px;cursor:pointer;padding:0;border:2px solid ' + (l.id === liningId ? '#c9a45c' : '#444') + ';background:' + (l.id === 'match' ? 'repeating-linear-gradient(45deg,#5a6070,#5a6070 5px,#2a2d36 5px,#2a2d36 10px)' : '#' + l.color.toString(16).padStart(6, '0'));
       b.onclick = () => { setLining(l.id); buildPanel(); }; row.appendChild(b); }
     panel.appendChild(row); const sm = document.createElement('small'); sm.style.color = '#8a8a93'; sm.textContent = LININGS.find(x => x.id === liningId)!.name + ' · shown on the model'; panel.appendChild(sm); }
   if (Object.keys(styleMeshes).length > 1) {

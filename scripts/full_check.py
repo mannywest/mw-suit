@@ -138,6 +138,8 @@ def see_through(prims, want_sheet=False):
             comp = (lab == k) & mask; px = int(comp.sum())
             if px < 4: continue
             ys, xs = np.nonzero(comp); cy, cx = ys.mean(), xs.mean(); zc = zb[int(round(cy)), int(round(cx))]
+            if not np.isfinite(zc):                    # centre pixel empty: use the nearest pixel of the patch itself
+                k_ = int(np.argmin((ys - cy) ** 2 + (xs - cx) ** 2)); cy, cx = float(ys[k_]), float(xs[k_]); zc = zb[ys[k_], xs[k_]]
             x_m = box[0] + cx / s; y_m = box[3] - cy / s
             world = c0 + right * x_m + up * y_m + dv * zc
             mat = owner[ib[int(round(cy)), int(round(cx))]]
@@ -248,6 +250,7 @@ def run(path, sheet=None):
     res['seethru_total_mm2'] = round(tot)
     for z in list(per): res['seethru_' + z + '_mm2'] = round(per[z])
     res.update(topology(prims))
+    import bumps as _b; _bd, _bc = _b.bumps(prims); res.update(_bd); res['_bump_clusters'] = _bc[:6]
     parts = ca.load(path); res.update(ca.holes(parts)); res.update(ca.shirt_poke(parts))
     return res, cl, masks
 
@@ -270,10 +273,13 @@ def main():
     print(f'\nNEW:      {os.path.basename(newp)}' + (f'\nPREVIOUS: {os.path.basename(prevp)}' if prevp else ''))
     print(f'\n{"check":<26}{"new":>9}' + (f'{"previous":>10}  result' if prevp else ''))
     for k, v in new.items():
+        if k.startswith('_'): continue
         if k.startswith('holes_') and k != 'holes_total': continue
         if v == 0 and old.get(k, 0) == 0 and (k.startswith(('open_', 'creases_', 'zigzag_', 'seethru_')) and k != 'seethru_total_mm2'): continue
         o = old.get(k)
         print(f'{k:<26}{v:>9}' + (f'{o if o is not None else "-":>10}  {verdict(v, o)}' if prevp else ''))
+    print('\nBumpiest spots (new file): score | verts | max mm off neighbours | where')
+    for sc, nv, mx, ps in new.get('_bump_clusters', [])[:5]: print('  %6.0f | %3d | %4.1f | (%+.3f,%.3f,%+.3f)' % (sc, nv, mx, *ps))
     print('\nBiggest see-through patches (new file): mm2 | seen from n of 12 views | where (x,y,z in metres) | cloth')
     for c in sorted(cl, key=lambda c: -c['mm2'])[:8]:
         print(f"  {c['mm2']:7.0f} | {c['views']:2d} | ({c['pos'][0]:+.3f},{c['pos'][1]:.3f},{c['pos'][2]:+.3f}) | {c['mat']}")

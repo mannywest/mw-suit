@@ -42,3 +42,9 @@ Base is not finished: open flaws are in HANDOFF_2026-11-15.md (neck side gaps, b
 ## 4. Where things are going
 
 Build one clean base, then plug notch, peak and shawl onto it. Today only the base exists (unfinished) and the shawl is a partial start.
+
+
+## Added 2026-11-19 (candidates, NOT on the website)
+- MW_Tailleur_suit_v4_BASE_stepE_sides.glb  = stepD + new cloth over pocket-side holes (CANDIDATE)
+- MW_Tailleur_suit_v4_BASE_stepF3_trimmed.glb = latest side-panel rebuild (CANDIDATE, still has hem slivers; lapel area untouched)
+- Full results and caveats: SESSION_LOG_2026-11-19.md. stepD remains the last file that was fully reviewed.
