@@ -48,6 +48,10 @@ p.lead{font-size:clamp(15px,1.25vw,18px);line-height:1.7;color:#c8c4ba;margin:0 
 section.panel{position:relative;z-index:3;background:linear-gradient(#07070a,#0b0b0e);padding:clamp(70px,10vw,140px) clamp(20px,6vw,96px);border-top:1px solid var(--line)}
 section.panel .head{max-width:760px;margin:0 0 48px}
 #builder{padding-bottom:40px}
+.sum{max-width:1100px;margin:18px auto 0;padding:18px 20px;border:1px solid #c9a45c55;border-radius:10px;background:#0c0c10cc}
+.sum b{color:var(--gold);letter-spacing:.14em;text-transform:uppercase;font-size:12px}
+.sum ul{margin:10px 0 14px;padding-left:18px;line-height:1.7;font-size:15px}
+.sumBtns{display:flex;flex-wrap:wrap;gap:10px}
 .frame{border:1px solid var(--line);height:min(82vh,820px);background:#15161a;position:relative}
 .frame iframe{width:100%;height:100%;border:0;display:block}
 .note{font-size:12px;color:var(--mute);margin:14px 0 0;letter-spacing:.04em}
@@ -122,6 +126,8 @@ footer a{color:var(--ink)}
  <div class="head"><p class="eyebrow">The 3D builder</p><h2>Design it <em>yourself.</em></h2>
   <p class="lead">Swap lapels, trims and buttons, add your own fabric photo, and export a cutting ticket. Drag to turn the suit.</p></div>
  <div class="frame"><iframe id="cfg" title="MW Tailleur 3D suit builder" data-src="configurator/index.html" loading="lazy" allow="fullscreen"></iframe></div>
+ <div class="sum" id="sum"><b>Your suit</b><ul id="sumList"><li>Make a choice above and it appears here.</li></ul>
+  <div class="sumBtns"><a class="btn solid" id="sumWa" href="#" target="_blank" rel="noopener">Request this suit</a><button class="btn" id="sumCopy" type="button">Copy summary</button><a class="btn" href="#packages">See packages and prices</a></div></div>
  <p class="note">Early version: the fabric catalogue is being filled from our supplier books. <a style="color:var(--gold)" href="configurator/index.html" target="_blank" rel="noopener">Open full screen</a></p>
 </section>
 

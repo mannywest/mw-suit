@@ -165,3 +165,15 @@ requestAnimationFrame(frame);
 loadModel('shawl').then((sc) => { sc.visible = false; buildParticles(sc); ready = true; $('#status').style.opacity = 0; })
   .catch((e) => { $('#status').textContent = 'Could not load the 3D model'; console.error(e); });
 window.__mw = { state, applyAll, loaded, camera, cur };
+
+// Live summary from the 3D builder (sent by the iframe)
+let sumLines = [];
+const sumText = () => 'Hi MW Tailleur, I designed this suit in your 3D builder:\n' + sumLines.map(l => '- ' + l).join('\n') + '\n\nCould we arrange a consultation?';
+addEventListener('message', (e) => {
+  if (e.source !== document.getElementById('cfg')?.contentWindow || e.data?.type !== 'mwt.summary' || !Array.isArray(e.data.lines)) return;
+  sumLines = e.data.lines.slice(0, 30).map(x => String(x).slice(0, 120));
+  const ul = document.getElementById('sumList'); ul.replaceChildren(...sumLines.map(l => Object.assign(document.createElement('li'), { textContent: l })));
+  document.getElementById('sumWa').href = wa(sumText());
+});
+document.getElementById('sumWa').addEventListener('click', (e) => { if (!sumLines.length) { e.preventDefault(); document.getElementById('sumWa').href = wa('Hi MW Tailleur, I would like to arrange a consultation.'); window.open(document.getElementById('sumWa').href, '_blank'); } });
+document.getElementById('sumCopy').addEventListener('click', async (e) => { try { await navigator.clipboard.writeText(sumLines.length ? sumText() : 'No choices yet'); e.target.textContent = 'Copied'; setTimeout(() => (e.target.textContent = 'Copy summary'), 1500); } catch { e.target.textContent = 'Copy failed'; } });
